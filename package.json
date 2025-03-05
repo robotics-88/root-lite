@@ -1,0 +1,26 @@
+{
+  "name": "mossy-lite",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "@vue/eslint-config-prettier": "^10.2.0",
+    "eslint": "^9.21.0",
+    "eslint-plugin-prettier": "^5.2.3",
+    "eslint-plugin-pug": "^1.2.5",
+    "eslint-plugin-vue-pug": "^0.6.2",
+    "prettier": "^3.5.3",
+    "vite": "^6.2.0"
+  },
+  "dependencies": {
+    "@babylonjs/core": "7.48.0",
+    "@babylonjs/loaders": "7.48.0"
+  }
+}

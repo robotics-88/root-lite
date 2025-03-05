@@ -1,0 +1,73 @@
+import * as babylon from '@babylonjs/core'
+import { createAnimatedCamera } from '../camera/camera.js'
+import { AnimationController } from '../animation/animationController.js'
+import { createLighting } from '../lighting.js'
+import { loadMeshFromURL, loadMeshFromFile } from '../meshLoader.js'
+import { setLoading } from '../../ui/loading.js'
+
+export async function createScene(canvas, options = {}) {
+  let { filePath, file } = options
+  let engine = null,
+    scene = null,
+    animationController = null
+
+  try {
+    // Create the Babylon.js rendering engine
+    engine = new babylon.Engine(canvas, true)
+    scene = new babylon.Scene(engine)
+
+    // Initialize the animated camera and attach it to the scene
+    let camera = await createAnimatedCamera(scene, canvas)
+
+    // Initialize the animation controller for handling camera animations
+    animationController = new AnimationController(camera)
+
+    // Setup lighting in the scene
+    createLighting(scene)
+
+    // Load a mesh from a URL or file, if provided
+    if (filePath) {
+      try {
+        await loadMeshFromURL(scene, filePath, canvas)
+      } catch (error) {
+        console.error('Failed to load file:', error)
+      } finally {
+        setLoading(false) // Hide loading UI once the file is processed
+      }
+    } 
+    else if (file) {
+      try {
+        await loadMeshFromFile(scene, file, canvas)
+      } catch (error) {
+        console.error('Failed to load file:', error)
+      } finally {
+        setLoading(false) // Hide loading UI once the file is processed
+      }
+    }
+
+    // Start the render loop for continuous scene updates
+    engine.runRenderLoop(() => scene.render())
+
+    // Begin playing the camera animation
+    animationController.play()
+
+    // Resize the engine on window resize to maintain aspect ratio
+    window.addEventListener('resize', () => engine.resize())
+
+    // Pause animation when the user interacts with the scene
+    scene.onPointerObservable.add(() => {
+      animationController.pause()
+    }, babylon.PointerEventTypes.POINTERDOWN)
+
+    // Resume animation when the user presses 'Space'
+    window.addEventListener('keydown', (event) => {
+      if (event.code === 'Space') animationController.resume()
+    })
+  } catch (error) {
+    console.error('Failed to initialize scene:', error)
+    return null // Return null if initialization fails
+  }
+
+  // Return the scene, engine, and animation controller for further use
+  return { engine, scene, animationController }
+}
