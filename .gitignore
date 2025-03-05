@@ -13,10 +13,8 @@ dist-ssr
 *.local
 .env
 
-# Files for the default loaded splat
+# File for the default loaded splat
 public/splat.ply
-public/images.txt
-public/cameras.txt
 
 # Editor directories and files
 .vscode/*

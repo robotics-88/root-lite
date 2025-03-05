@@ -1,9 +1,9 @@
-import { createScene } from './babylon/scene/createScene.js'
-import { updateScene } from './babylon/scene/updateScene.js'
-import { loadMeshFromURL, loadMeshFromFile } from './babylon/meshLoader.js'
-import { setLoading } from './ui/loading.js'
+import { createScene } from './src/js/babylon/scene/createScene.js'
+import { updateScene } from './src/js/babylon/scene/updateScene.js'
+import { loadMeshFromURL, loadMeshFromFile } from './src/js/babylon/meshLoader.js'
+import { setLoading } from './src/js/ui/loading.js'
 
-import checkEnvironmentVariables from './check-environment-variables'
+import checkEnvironmentVariables from './src/js/check-environment-variables.js'
 checkEnvironmentVariables()
 
 const FILE_PATH = import.meta.env.VITE_DEFAULT_SPLAT_FILE_PATH
