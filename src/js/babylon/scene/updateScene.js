@@ -1,4 +1,4 @@
-import { loadMeshFromFile } from '../meshLoader.js'
+import { loadMeshFromFile, loadMeshFromDataView } from '../meshLoader.js'
 import { setLoading } from '../../ui/loading.js'
 
 export async function updateScene(scene, file, animationController) {
@@ -7,8 +7,14 @@ export async function updateScene(scene, file, animationController) {
   try {
     // Dispose of existing meshes
     scene.meshes.forEach((mesh) => mesh.dispose())
-    // Load the new mesh
-    await loadMeshFromFile(scene, file)
+    // Check if file is a DataView and call the appropriate function
+    if (file instanceof DataView) {
+      console.log('DataView', file)
+      await loadMeshFromDataView(scene, file.buffer)
+    } else {
+      await loadMeshFromFile(scene, file)
+    }
+
     animationController.reset()
   } catch (error) {
     console.error('Failed to update scene:', error)
