@@ -12,7 +12,7 @@ let canvas = document.getElementById('renderCanvas')
 
 // Load initial mesh
 setLoading(true)
-//loadMeshFromURL(scene, FILE_PATH, canvas).finally(() => setLoading(false))
+
 let { engine, scene, animationController } = await createScene(canvas, {
   filePath: FILE_PATH,
 })

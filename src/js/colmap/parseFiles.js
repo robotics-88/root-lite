@@ -48,7 +48,6 @@ function parseImagesTxt(text) {
     let numB = parseInt(b.name.replace(/\D/g, '')) // Extract number from filename (e.g., out2.png -> 2)
     return numA - numB
   })
-  console.table(images)
   return images
 }
 

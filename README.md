@@ -28,8 +28,9 @@ npm run dev
 ##Project Structure
 ```php
 ├── public/              # Default folder for loading .ply files
-│   ├── model.ply        # Default 3D model (add your own file here)
-│
+│   ├── splat.ply        # Default 3D model (add your own file here)
+│   ├── cameras.txt      # colmap file
+|   ├── images.txt       # colmap file
 ├── src/
 |   ├── js/              # Main source code
       ├── babylon/       # Management of babylon.js specfici 3d rendering and animations        
