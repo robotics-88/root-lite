@@ -1,0 +1,24 @@
+/* Import other styles */
+@import url('components/loading-spinner.css');
+@import url('components/file-input.css');
+@import url('components/toast.css');
+@import url('components/controls.css');
+
+/* Main Styles */
+body,
+html {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+canvas {
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  cursor: grab; /* Default cursor for navigation */
+}
+
+canvas:active {
+  cursor: grabbing; /* While dragging */
+}
