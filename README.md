@@ -5,15 +5,18 @@ This project initializes a 3D scene using Babylon.js and allows loading `.ply` f
 ## 🚀 Getting Started
 
 ### 1. Install Dependencies
+
 Ensure you have Node.js installed, then install dependencies:
+
 ```sh
 npm install
 ```
 
 ### 2. Install Dependencies
+
 To have a model loaded by default, place a .ply file in the public folder
 
-filename must be 
+filename must be
 
 splat.ply
 
@@ -21,11 +24,13 @@ This will trigger an attempt to fetch cameras.txt and images.txt from localhost:
 The automated animation is turned off for the moment
 
 ### 3. Start the Development Server
+
 ```sh
 npm run dev
 ```
 
 ##Project Structure
+
 ```php
 ├── public/              # Default folder for loading .ply files
 │   ├── splat.ply        # Default 3D model (add your own file here)
@@ -33,7 +38,7 @@ npm run dev
 |   ├── images.txt       # colmap file
 ├── src/
 |   ├── js/              # Main source code
-      ├── babylon/       # Management of babylon.js specfici 3d rendering and animations        
+      ├── babylon/       # Management of babylon.js specfici 3d rendering and animations
 │       ├── scene/           # Scene setup and logic
 │       ├── camera/          # Animated camera setup
 │       ├── lighting/        # Lighting configurations

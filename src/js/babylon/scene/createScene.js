@@ -34,8 +34,7 @@ export async function createScene(canvas, options = {}) {
       } finally {
         setLoading(false) // Hide loading UI once the file is processed
       }
-    } 
-    else if (file) {
+    } else if (file) {
       try {
         await loadMeshFromFile(scene, file, canvas)
       } catch (error) {

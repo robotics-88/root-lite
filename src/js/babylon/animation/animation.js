@@ -81,8 +81,7 @@ function createKeys(positions, threshold = 0.2) {
 
       // Recursively add keyframes for the second half
       addKeyframes(midFrame, midPos, midRot, endFrame, nextPos, nextRot)
-    } 
-    else {
+    } else {
       // Add keyframes when within threshold
       positionKeys.push({ frame: startFrame, value: pos })
       rotationKeys.push({ frame: startFrame, value: rot })
