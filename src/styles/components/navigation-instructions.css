@@ -27,13 +27,7 @@
 }
 /* Button styles */
 #toggle-instructions-button {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   margin: 1rem;
-  
-  border-radius: 5px;
-  cursor: pointer;
 }
 
 #toggle-instructions-button::before {
