@@ -5,7 +5,7 @@ export function setupDragAndDrop(
   canvas,
   scene,
   animationController,
-  updateScene
+  updateScene,
 ) {
   let dragCounter = 0 // Keeps track of drag events to determine when to show/hide the overlay
   let dropOverlay = document.getElementById('drop-overlay')
@@ -24,15 +24,16 @@ export function setupDragAndDrop(
       processTarballFiles(scene, file, animationController)
         .then(() => showMessage('Tarball loaded successfully!', 'success'))
         .catch(() => showMessage('Error loading tarball.', 'error'))
-    } 
+    }
     else if (file && file.name.endsWith('.ply')) {
       // Attempt to update the scene with the dropped file
       updateScene(scene, file, animationController)
         .then(() => showMessage('File loaded successfully!', 'success'))
         .catch(() => showMessage('Error loading file.', 'error'))
-    } 
+    }
     else {
       showMessage('Invalid file type. Please drop a .ply file.', 'error')
+      setLoading(false)
       return
     }
     dropOverlay.classList.toggle('visible')

@@ -28,9 +28,11 @@ export async function createScene(canvas, filePath) {
     if (filePath) {
       try {
         await loadMeshFromURL(scene, filePath, canvas)
-      } catch (error) {
+      }
+      catch (error) {
         console.error('Failed to load file:', error)
-      } finally {
+      }
+      finally {
         setLoading(false) // Hide loading UI once the file is processed
       }
     }
@@ -53,7 +55,8 @@ export async function createScene(canvas, filePath) {
     window.addEventListener('keydown', (event) => {
       if (event.code === 'Space') animationController.resume()
     })
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Failed to initialize scene:', error)
     return null // Return null if initialization fails
   }

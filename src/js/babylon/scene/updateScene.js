@@ -12,9 +12,11 @@ export async function updateScene(scene, file, animationController) {
     else await loadMeshFromFile(scene, file)
 
     //animationController.reset()
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Failed to update scene:', error)
-  } finally {
+  }
+  finally {
     setLoading(false)
   }
 }

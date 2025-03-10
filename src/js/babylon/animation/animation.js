@@ -6,7 +6,7 @@ import * as babylon from '@babylonjs/core'
 export function addAnimations(positions, camera) {
   // If new positions exist, apply them to the camera
   //turned off for dev, condition should be: positions.length > 0
-  if (false){
+  if (false) {
     let startPosition = positions[0].location
     let startRotation = positions[0].rotation
 
@@ -31,7 +31,7 @@ function createAnimations(positions) {
     'position',
     30, // Frames per second (FPS)
     babylon.Animation.ANIMATIONTYPE_VECTOR3,
-    babylon.Animation.ANIMATIONLOOPMODE_CYCLE
+    babylon.Animation.ANIMATIONLOOPMODE_CYCLE,
   )
 
   // Create rotation animation
@@ -40,7 +40,7 @@ function createAnimations(positions) {
     'rotationQuaternion',
     30, // FPS
     babylon.Animation.ANIMATIONTYPE_QUATERNION,
-    babylon.Animation.ANIMATIONLOOPMODE_CYCLE
+    babylon.Animation.ANIMATIONLOOPMODE_CYCLE,
   )
 
   // Generate keyframes for position and rotation
@@ -91,7 +91,7 @@ function createKeys(positions, threshold = 0.2) {
 
       // Recursively add keyframes for the second half
       addKeyframes(midFrame, midPos, midRot, endFrame, nextPos, nextRot)
-    } 
+    }
     else {
       // Add keyframes when within threshold
       positionKeys.push({ frame: startFrame, value: pos })

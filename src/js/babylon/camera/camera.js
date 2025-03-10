@@ -23,7 +23,7 @@ export async function createAnimatedCamera(scene, canvas) {
   let camera = new babylon.UniversalCamera(
     'animatedCamera',
     new babylon.Vector3(0, 0, 0), // Initial position
-    scene
+    scene,
   )
 
   // Attach control to canvas

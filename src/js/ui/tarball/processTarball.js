@@ -13,10 +13,11 @@ export async function processTarballFiles(scene, file, animationController) {
     if (textFiles.has('images.txt') && textFiles.has('cameras.txt')) {
       animationController.resetCamera(
         textFiles.get('images.txt'),
-        textFiles.get('cameras.txt')
+        textFiles.get('cameras.txt'),
       )
     }
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Issue loading Tarball files', error)
   }
 }

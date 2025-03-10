@@ -78,7 +78,7 @@ async function parseCameraPoses(posesURL, scale = 2) {
           translation: new babylon.Vector3(
             parseFloat(parts[5]) * scale,
             parseFloat(parts[6]) * scale,
-            parseFloat(parts[7]) * scale
+            parseFloat(parts[7]) * scale,
           ),
           frame: parseInt(parts[8], 10),
           image: parts[9],
@@ -87,7 +87,8 @@ async function parseCameraPoses(posesURL, scale = 2) {
       .filter((pose) => pose !== null)
 
     return poses
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Error parsing camera poses:', error)
   }
 }
@@ -102,7 +103,8 @@ async function parseCameraPositions(imagesSource, camerasSource) {
       location: image.translation,
       rotation: image.rotation,
     }))
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Error parsing camera positions:', error)
     return []
   }

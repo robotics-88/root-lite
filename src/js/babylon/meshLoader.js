@@ -44,7 +44,8 @@ async function loadMeshFromBuffer(scene, arrayBuffer, canvas) {
 
   try {
     return await loadMeshFromURL(scene, blobUrl, canvas) // Load the model from the Blob URL
-  } finally {
+  }
+  finally {
     URL.revokeObjectURL(blobUrl) // Cleanup to free memory
   }
 }
