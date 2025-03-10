@@ -1,4 +1,5 @@
 import { processTarballFiles } from './tarball/processTarball'
+import { setLoading } from './loading'
 
 export function setupDragAndDrop(
   canvas,
@@ -16,22 +17,26 @@ export function setupDragAndDrop(
     dragCounter = 0
 
     let file = event.dataTransfer.files[0] // Get the first dropped file
+    setLoading(true)
     showMessage('Loading file...', 'info')
     if (file && file.name.endsWith('.tar.gz')) {
       // Attempt to process the tarball file
       processTarballFiles(scene, file, animationController)
         .then(() => showMessage('Tarball loaded successfully!', 'success'))
         .catch(() => showMessage('Error loading tarball.', 'error'))
-    } else if (file && file.name.endsWith('.ply')) {
+    } 
+    else if (file && file.name.endsWith('.ply')) {
       // Attempt to update the scene with the dropped file
       updateScene(scene, file, animationController)
         .then(() => showMessage('File loaded successfully!', 'success'))
         .catch(() => showMessage('Error loading file.', 'error'))
-    } else {
+    } 
+    else {
       showMessage('Invalid file type. Please drop a .ply file.', 'error')
       return
     }
     dropOverlay.classList.toggle('visible')
+    setLoading(false)
   }
 
   // Prevents default browser behavior for drag events

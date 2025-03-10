@@ -22,12 +22,14 @@ setLoading(true)
   document
     .getElementById('fileInput')
     .addEventListener('change', async (event) => {
+      setLoading(true)
       let file = event.target.files[0]
       if (!file) return
       else if (file.name.endsWith('.ply'))
         await updateScene(scene, file, animationController)
       else if (file.name.endsWith('.tar.gz'))
         await processTarballFiles(scene, file, animationController)
+      setLoading(false)
     })
 
   // Handle drag and drop

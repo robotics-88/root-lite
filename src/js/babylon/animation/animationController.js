@@ -19,9 +19,8 @@ export class AnimationController {
   play() {
     if (!this.animationTarget || !this.animationTarget.animations.length) return
 
-    if (this.animatable) {
-      this.animatable.restart()
-    } else {
+    if (this.animatable) this.animatable.restart()
+    else {
       let length = this.animationTarget.animations[0]._keys.length
       this.animatable = this.animationTarget
         .getScene()
