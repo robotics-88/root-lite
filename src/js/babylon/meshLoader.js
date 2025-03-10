@@ -66,4 +66,3 @@ export async function loadMeshFromFile(scene, file, canvas) {
 export async function loadMeshFromDataView(scene, arrayBuffer, canvas) {
   return await loadMeshFromBuffer(scene, arrayBuffer, canvas)
 }
-

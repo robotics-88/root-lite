@@ -51,6 +51,7 @@ function parseImagesTxt(text) {
   return images
 }
 
+/* eslint-disable no-unused-vars */
 // Function to parse pose.txt
 async function parseCameraPoses(posesURL, scale = 2) {
   let poses = []
@@ -90,32 +91,43 @@ async function parseCameraPoses(posesURL, scale = 2) {
     console.error('Error parsing camera poses:', error)
   }
 }
-// Function to parse camera positions from images.txt and cameras.txt
-async function parseCameraPositions(imagesURL, camerasURL) {
-  let positions = []
-  try {
-    let imagesText = await fetchTextFile(imagesURL)
 
+// Function to parse camera positions from images.txt and cameras.txt
+async function parseCameraPositions(imagesSource, camerasSource) {
+  try {
+    let imagesText = await getTextContent(imagesSource)
     let imagesArray = parseImagesTxt(imagesText)
 
-    imagesArray.forEach((image) => {
-      positions.push({
-        location: image.translation,
-        rotation: image.rotation,
-      })
-    })
-    return positions
+    return imagesArray.map((image) => ({
+      location: image.translation,
+      rotation: image.rotation,
+    }))
   } catch (error) {
     console.error('Error parsing camera positions:', error)
+    return []
   }
 }
 
-// Main function to execute everything
-async function processCameraData(imagesURL, camerasURL, posesURL) {
-  let cameraPositions = await parseCameraPositions(imagesURL, camerasURL)
-  let cameraPoses = await parseCameraPoses(posesURL)
+// Function to parse text from a DataView or fetch from a URL
+async function getTextContent(source) {
+  if (source instanceof DataView) return dataViewToString(source)
+  else if (typeof source === 'string') return fetchTextFile(source)
+  else {
+    throw new Error('Invalid source type: expected DataView or URL string')
+  }
+}
 
-  return { poses: cameraPoses, positions: cameraPositions }
+// Function to convert DataView to a string
+function dataViewToString(dataView) {
+  let decoder = new TextDecoder('utf-8')
+  return decoder.decode(dataView)
+}
+
+// Main function to execute everything
+async function processCameraData(imagesSource, camerasSource) {
+  let cameraPositions = await parseCameraPositions(imagesSource, camerasSource)
+
+  return { positions: cameraPositions }
 }
 
 export { parseCameraPositions, processCameraData }

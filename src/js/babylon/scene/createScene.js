@@ -2,11 +2,10 @@ import * as babylon from '@babylonjs/core'
 import { createAnimatedCamera } from '../camera/camera.js'
 import { AnimationController } from '../animation/animationController.js'
 import { createLighting } from '../lighting.js'
-import { loadMeshFromURL, loadMeshFromFile } from '../meshLoader.js'
+import { loadMeshFromURL } from '../meshLoader.js'
 import { setLoading } from '../../ui/loading.js'
 
-export async function createScene(canvas, options = {}) {
-  let { filePath, file } = options
+export async function createScene(canvas, filePath) {
   let engine = null,
     scene = null,
     animationController = null
@@ -29,14 +28,6 @@ export async function createScene(canvas, options = {}) {
     if (filePath) {
       try {
         await loadMeshFromURL(scene, filePath, canvas)
-      } catch (error) {
-        console.error('Failed to load file:', error)
-      } finally {
-        setLoading(false) // Hide loading UI once the file is processed
-      }
-    } else if (file) {
-      try {
-        await loadMeshFromFile(scene, file, canvas)
       } catch (error) {
         console.error('Failed to load file:', error)
       } finally {

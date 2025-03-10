@@ -10,13 +10,13 @@
   align-items: center;
   border: 2px dashed #0056b3;
   color: black;
-  padding: .5rem;
+  padding: 0.5rem;
   font-size: 16px;
   cursor: pointer;
   border-radius: 5px;
   text-align: center;
   background-color: rgba(255, 255, 255, 0.3);
-  margin: .5rem;
+  margin: 0.5rem;
   transition: background-color 0.3s ease;
 }
 
@@ -28,7 +28,7 @@
 
 /* Add a nice icon before the text */
 #fileInput + label::before {
-  content: url("https://img.icons8.com/material-outlined/24/upload--v2.png");
+  content: url('https://img.icons8.com/material-outlined/24/upload--v2.png');
   vertical-align: middle;
 }
 
@@ -39,7 +39,7 @@
   }
 
   #fileInput + label::before {
-    content: url("https://img.icons8.com/material-outlined/24/upload--v2.png");
+    content: url('https://img.icons8.com/material-outlined/24/upload--v2.png');
   }
 }
 

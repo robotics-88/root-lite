@@ -12,7 +12,7 @@
         padding: 0;
         overflow: hidden;
       }
-      
+
       canvas {
         width: 100vw;
         height: 100vh;
@@ -23,9 +23,12 @@
   <body>
     <div id="controls">
       <input type="file" id="fileInput" accept=".ply,.tar.gz" />
-      <label for="fileInput"><span>Load file</span><span><small>or drag and drop</small></span></label>
+      <label for="fileInput"
+        ><span>Load file</span
+        ><span><small>or drag and drop</small></span></label
+      >
     </div>
-    
+
     <div id="drop-overlay"></div>
     <div id="loadingSpinner"></div>
     <canvas id="renderCanvas"></canvas>
