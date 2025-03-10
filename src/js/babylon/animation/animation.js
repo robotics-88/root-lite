@@ -4,11 +4,21 @@ import * as babylon from '@babylonjs/core'
  * Adds animations to the given camera based on a list of positions.
  */
 export function addAnimations(positions, camera) {
-  let { positionAnimation, rotationAnimation } = createAnimations(positions)
+  // If new positions exist, apply them to the camera
+  //turned off for dev, condition should be: positions.length > 0
+  if (false){
+    let startPosition = positions[0].location
+    let startRotation = positions[0].rotation
 
-  // Attach animations to the camera
-  camera.animations.push(positionAnimation)
-  camera.animations.push(rotationAnimation)
+    camera.position = startPosition
+    camera.rotationQuaternion = startRotation
+
+    let { positionAnimation, rotationAnimation } = createAnimations(positions)
+
+    // Attach animations to the camera
+    camera.animations.push(positionAnimation)
+    camera.animations.push(rotationAnimation)
+  }
 }
 
 /**

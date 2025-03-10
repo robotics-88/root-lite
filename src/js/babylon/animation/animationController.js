@@ -87,21 +87,10 @@ export class AnimationController {
     // Process new camera pose data
     let { positions } = await processCameraData(imagesDataView, camerasDataView)
 
-    // If new positions exist, apply them to the camera
-    //turned off for dev, condition should be: positions.length > 0
-    if (false) {
-      let startPosition = positions[0].location
-      let startRotation = positions[0].rotation
+    addAnimations(positions, this.animationTarget)
 
-      this.animationTarget.position = startPosition
-      this.animationTarget.rotationQuaternion = startRotation
-
-      // Apply new animations
-      addAnimations(positions, this.animationTarget)
-
-      // Restart animation
-      this.play()
-    }
+    // Restart animation
+    this.play()
   }
 
   /**
