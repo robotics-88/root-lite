@@ -1,0 +1,6 @@
+:root {
+  --button-background-color: rgba(255, 255, 255, 0.3);
+  --button-hover-color:  rgba(255, 255, 255, 0.7);
+  --button-text-color: black;
+  --button-border-color: #0056b3;
+}

@@ -1,5 +1,6 @@
 export async function extractTarballFiles(compressedFile) {
-  if (!compressedFile) {
+
+  if(!compressedFile) {
     console.error('no file')
     return
   }
@@ -25,14 +26,14 @@ export async function extractTarballFiles(compressedFile) {
     if (position + 4 > bufferView.byteLength) break
 
     // exit if we read four consecutive null characters
-    if (bufferView.getInt32(position) == 0) break
+    if(bufferView.getInt32(position) == 0) break
 
     // get the file header
     let { name, size, typeFlag: fileType } = getHeader(bufferView, position)
     position += 512
 
     // if the file is a directory, we're done, move on!
-    if (fileType == 5) continue
+    if(fileType == 5) continue
 
     files.push({
       name,
@@ -41,36 +42,36 @@ export async function extractTarballFiles(compressedFile) {
 
     // file sizes are rounded up to the nearest 512-byte block
     let remainder = size % 512
-    position += size + 512 - remainder
+    position += (size + 512 - remainder)
   }
 
   return files
 }
 
-let getHeader = function (buffer, fileOffset) {
+let getHeader = function(buffer, fileOffset) {
   return {
-    name: getStringFromBuffer(buffer, 100, 0 + fileOffset),
-    mode: getOctalFromBuffer(buffer, 8, 100 + fileOffset),
-    uid: getOctalFromBuffer(buffer, 8, 108 + fileOffset),
-    gid: getOctalFromBuffer(buffer, 8, 116 + fileOffset),
-    size: getOctalFromBuffer(buffer, 12, 124 + fileOffset),
-    mtime: getOctalFromBuffer(buffer, 12, 136 + fileOffset),
-    checksum: getOctalFromBuffer(buffer, 8, 148 + fileOffset),
-    typeFlag: getIntFromBuffer(buffer, 1, 156 + fileOffset),
-    linkname: getStringFromBuffer(buffer, 100, 157 + fileOffset),
-    ustar: getStringFromBuffer(buffer, 6, 257 + fileOffset),
-    version: getStringFromBuffer(buffer, 2, 263 + fileOffset),
-    uname: getStringFromBuffer(buffer, 32, 265 + fileOffset),
-    gname: getStringFromBuffer(buffer, 32, 297 + fileOffset),
-    devmajor: getStringFromBuffer(buffer, 8, 329 + fileOffset),
-    devminor: getStringFromBuffer(buffer, 8, 337 + fileOffset),
+    name:       getStringFromBuffer(buffer, 100,   0 + fileOffset),
+    mode:       getOctalFromBuffer( buffer,   8, 100 + fileOffset),
+    uid:        getOctalFromBuffer( buffer,   8, 108 + fileOffset),
+    gid:        getOctalFromBuffer( buffer,   8, 116 + fileOffset),
+    size:       getOctalFromBuffer( buffer,  12, 124 + fileOffset),
+    mtime:      getOctalFromBuffer( buffer,  12, 136 + fileOffset),
+    checksum:   getOctalFromBuffer( buffer,   8, 148 + fileOffset),
+    typeFlag:     getIntFromBuffer( buffer,   1, 156 + fileOffset),
+    linkname:   getStringFromBuffer(buffer, 100, 157 + fileOffset),
+    ustar:      getStringFromBuffer(buffer,   6, 257 + fileOffset),
+    version:    getStringFromBuffer(buffer,   2, 263 + fileOffset),
+    uname:      getStringFromBuffer(buffer,  32, 265 + fileOffset),
+    gname:      getStringFromBuffer(buffer,  32, 297 + fileOffset),
+    devmajor:   getStringFromBuffer(buffer,   8, 329 + fileOffset),
+    devminor:   getStringFromBuffer(buffer,   8, 337 + fileOffset),
     namePrefix: getStringFromBuffer(buffer, 155, 345 + fileOffset),
   }
 }
 
 function getCharsFromBuffer(buffer, length, offset) {
   let charCodes = []
-  for (let i = 0; i < length; ++i) {
+  for(let i=0; i<length; ++i) {
     let charCode = buffer.getUint8(i + offset)
     if (charCode == 0) break
     else charCodes.push(charCode)
@@ -81,11 +82,9 @@ function getCharsFromBuffer(buffer, length, offset) {
 
 function getStringFromBuffer(buffer, length, offset) {
   // returns null if buffer read is empty
-  return (
-    getCharsFromBuffer(buffer, length, offset)
-      ?.map((c) => String.fromCharCode(c))
-      .join('') || null
-  )
+  return getCharsFromBuffer(buffer, length, offset)
+    ?.map(c=> String.fromCharCode(c))
+    .join('') || null
 }
 
 function getIntFromBuffer(buffer, length, offset) {

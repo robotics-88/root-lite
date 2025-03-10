@@ -22,16 +22,36 @@
   </head>
   <body>
     <div id="controls">
-      <input type="file" id="fileInput" accept=".ply,.tar.gz" />
-      <label for="fileInput"
+      <input type="file" id="file-input" accept=".ply,.tar.gz" />
+      <label for="file-input" class="button"
         ><span>Load file</span
         ><span><small>or drag and drop</small></span></label
       >
+
+      <button id="toggle-instructions-button" class="button">
+        <span>Instructions</span>
+      </button>
+      <!-- Instructions box that can be toggled -->
+      <div id="instructions-box" class="hidden">
+        <h3>Navigation</h3>
+        <h4>Mouse Controls</h4>
+        <ul>
+          <li>Left click and drag to pan the scene.</li>
+          <li>Right click and drag to rotate the scene.</li>
+          <li>Scroll to zoom in and out.</li>
+        </ul>
+        <h4>Touch Controls</h4>
+        <ul>
+          <li>Single finger drag to pan the scene.</li>
+          <li>Two finger drag to rotate the scene.</li>
+          <li>Pinch to zoom in and out.</li>
+        </ul>
+      </div>
     </div>
 
     <div id="drop-overlay"></div>
-    <div id="loadingSpinner"></div>
-    <canvas id="renderCanvas"></canvas>
+    <div id="loading-spinner"></div>
+    <canvas id="render-canvas"></canvas>
     <script type="module" src="/main.js"></script>
   </body>
 </html>

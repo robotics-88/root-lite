@@ -1,44 +1,27 @@
 /* Hide the default file input */
-#fileInput {
+#file-input {
   display: none;
 }
 
 /* Custom button styling */
-#fileInput + label {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+#file-input + label {
   border: 2px dashed #0056b3;
-  color: black;
-  padding: 0.5rem;
-  font-size: 16px;
-  cursor: pointer;
-  border-radius: 5px;
-  text-align: center;
-  background-color: rgba(255, 255, 255, 0.3);
   margin: 0.5rem;
-  transition: background-color 0.3s ease;
-}
-
-/* Hover effect for the button */
-#fileInput + label:hover {
-  color: #000000;
-  background-color: rgba(255, 255, 255, 0.7);
 }
 
 /* Add a nice icon before the text */
-#fileInput + label::before {
+#file-input + label::before {
   content: url('https://img.icons8.com/material-outlined/24/upload--v2.png');
   vertical-align: middle;
 }
 
 /* Hide the text and only show the icon on mobile screens */
 @media (max-width: 767px) {
-  #fileInput + label span {
+  #file-input + label span {
     display: none; /* Hide the span text */
   }
 
-  #fileInput + label::before {
+  #file-input + label::before {
     content: url('https://img.icons8.com/material-outlined/24/upload--v2.png');
   }
 }
