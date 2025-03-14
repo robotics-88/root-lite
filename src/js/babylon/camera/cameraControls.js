@@ -1,25 +1,67 @@
 import * as babylon from '@babylonjs/core'
-
+import { meshLoaderEvents } from '../meshLoader'
 /**
  * Adds custom camera controls for panning, rotating, and zooming using
  * mouse and touch interactions.
  */
 export function addCameraControls(camera, canvas) {
+  meshLoaderEvents.addEventListener('octreeLoaded', (event) => {
+    console.log('octree: ', event.detail)
+    let octree = event.detail
   let isPanning = false
   let isRotating = false
   let prevX = null,
     prevY = null,
     prevDistance = null
   let activeTouches = new Map()
-
+  let rotationCenter = null
+  let rayLine = null; // Store the line mesh
   // Handle pointer down events (mouse or touch)
   canvas.addEventListener('pointerdown', (event) => {
-    if (event.pointerType === 'touch')
-      activeTouches.set(event.pointerId, { x: event.clientX, y: event.clientY })
-    else {
+    if (event.pointerType !== 'touch') {
+      let pickResult = camera.getScene().pick(event.clientX, event.clientY);
+      console.log(pickResult)
       if (event.button === 0) isPanning = true // Left click for panning
-      if (event.button === 2) isRotating = true // Right click for rotating
+      else if (event.button === 2) {
+        console.log('first if')
+        isRotating = true;
+        
+        // Pick a point in the scene at the click location
+        let pickResult = camera.getScene().pick(event.clientX, event.clientY);
+        console.log(pickResult.ray)
+        
+        let intersection = octree.findIntersection(pickResult.ray)
+        console.log(intersection)
+        let scene = camera.getScene()
+        let sphere = babylon.MeshBuilder.CreateSphere("sphere", {diameter: .02}, scene);
+        sphere.position = intersection; // Set the position to the picked point
+        sphere.material = new babylon.StandardMaterial("greenMat", scene); // Create material
+        sphere.material.diffuseColor = new babylon.Color3(0, 1, 0); // Set color to green
+        if (rayLine) {
+          rayLine.dispose(); // Remove the previous ray line
+      }
+      const rayLength = 1000; // Length of the ray line
+      const startPoint = pickResult.ray.origin; // Ray's starting point (camera)
+      const endPoint = pickResult.ray.origin.add(pickResult.ray.direction.scale(rayLength)); // Correct way to calculate the endpoint
+
+      const points = [startPoint.x, startPoint.y, startPoint.z, endPoint.x, endPoint.y, endPoint.z];
+      console.log(points)
+      rayLine = babylon.MeshBuilder.CreateLines("rayLine", { points: points, color: new babylon.Color3(1, 0, 0) }, camera.getScene()); // Create the red line mesh
+        // if (pickResult.hit) {
+        //   rotationCenter = pickResult.pickedPoint.clone(); // Store clicked point as rotation center
+
+        //        // Create a green sphere at the picked point
+        //        let sphere = babylon.MeshBuilder.CreateSphere("sphere", {diameter: .1}, scene);
+        //        sphere.position = pickResult.pickedPoint; // Set the position to the picked point
+        //        sphere.material = new babylon.StandardMaterial("greenMat", scene); // Create material
+        //        sphere.material.diffuseColor = new babylon.Color3(0, 1, 0); // Set color to green
+        // }
+      }
+      console.log(rotationCenter)
     }
+    else
+      activeTouches.set(event.pointerId, { x: event.clientX, y: event.clientY })
+    
     prevX = event.clientX
     prevY = event.clientY
   })
@@ -39,7 +81,7 @@ export function addCameraControls(camera, canvas) {
 
     if (isPanning) {
       // Adjust camera position based on movement
-      let panFactor = 0.0005 //adjust to change panning speed
+      let panFactor = 0.0015 //adjust to change panning speed
       camera.position.addInPlace(
         camera.getDirection(babylon.Axis.X).scale(-deltaX * panFactor),
       )
@@ -130,4 +172,5 @@ export function addCameraControls(camera, canvas) {
   canvas.addEventListener('lostpointercapture', (event) =>
     activeTouches.delete(event.pointerId),
   )
+})
 }

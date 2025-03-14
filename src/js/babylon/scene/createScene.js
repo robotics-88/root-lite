@@ -23,11 +23,13 @@ export async function createScene(canvas, filePath) {
 
     // Setup lighting in the scene
     createLighting(scene)
+    let octree = null
 
     // Load a mesh from a URL or file, if provided
     if (filePath) {
       try {
-        await loadMeshFromURL(scene, filePath, canvas)
+        octree = await loadMeshFromURL(scene, filePath, canvas)
+        console.log(octree)
       }
       catch (error) {
         console.error('Failed to load file:', error)
@@ -36,6 +38,11 @@ export async function createScene(canvas, filePath) {
         setLoading(false) // Hide loading UI once the file is processed
       }
     }
+
+    
+
+    
+
 
     // Start the render loop for continuous scene updates
     engine.runRenderLoop(() => scene.render())

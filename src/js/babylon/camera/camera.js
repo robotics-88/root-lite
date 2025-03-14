@@ -9,7 +9,8 @@ const CAMERAS_FILE_PATH = import.meta.env.VITE_DEFAULT_CAMERAS_FILE_PATH
 /**
  * Creates an animated camera in the scene based on parsed COLMAP camera positions.
  */
-export async function createAnimatedCamera(scene, canvas) {
+export async function createAnimatedCamera(scene, canvas, octree) {
+  console.log(octree)
   /**
    * URLs to COLMAP output files (for development).
    */

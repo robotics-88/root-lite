@@ -1,7 +1,10 @@
 import * as babylon from '@babylonjs/core'
 import '@babylonjs/loaders'
-
+import { Octree } from './octree'
 let loadedMeshes = []
+ // Create the octree instance
+ 
+let octree = null
 
 /**
  * Prevents models from stacking up
@@ -11,24 +14,55 @@ function clearPreviousMeshes() {
   loadedMeshes = []
 }
 
+export const meshLoaderEvents = new EventTarget()
+
 /**
  * Loads a mesh into the Babylon.js scene from a given url.
  */
 export async function loadMeshFromURL(scene, url, canvas) {
-  let scale = 2 // Scaling factor for the mesh
+  let scale = 1 // Scaling factor for the mesh
   clearPreviousMeshes()
+
+
   babylon.SceneLoader.ImportMeshAsync('', url, '', scene, null, '.ply')
     .then((result) => {
       // Access the loaded meshes
       result.meshes.forEach((mesh) => {
         // Apply scaling factor to each mesh
         mesh.scaling = new babylon.Vector3(scale, scale, scale)
+        mesh.isPickable = false // the raytracing for the splat image is very inaccurate and creates distracting issues
+        console.log(mesh)
+        // Extract positions from _splatPositions array
+        var positions = mesh._splatPositions; // Array of 3D positions for each point in your point cloud
+        let points = []
+        for(let i = 0; i< positions.length; i+=4){
+          points.push(new babylon.Vector3(positions[i], positions[i+1], positions[i+2]))
+        }
+        
+        // var pointCloud = new babylon.PointsCloudSystem("pointCloud", 2, scene);
+        // pointCloud.addPoints(points.length, (particle) => {
+        //   particle.position = points.pop()
+        // })
+        
+        // pointCloud.buildMeshAsync().then(function() {
+        //   pointCloud.isVisible = true
+        //   console.log(pointCloud)
+        // })
+        octree = new Octree(points)
+        console.log(octree)
+        meshLoaderEvents.dispatchEvent(new CustomEvent('octreeLoaded', { detail: octree }))
       })
       loadedMeshes = result.meshes // Store so they can be cleared later
+      
+
+      
+
+
     })
     .catch((error) => {
       console.error('Error loading mesh:', error)
     })
+    return octree
 }
 
 /**
