@@ -1,5 +1,6 @@
 import { processTarballFiles } from '../tarball/processTarball'
 import { setLoading } from './loading'
+import { showToast } from './toast'
 
 export function setupDragAndDrop(
   canvas,
@@ -18,21 +19,21 @@ export function setupDragAndDrop(
 
     let file = event.dataTransfer.files[0] // Get the first dropped file
     setLoading(true)
-    showMessage('Loading file...', 'info')
+    showToast('Loading file...', 'info')
     if (file && file.name.endsWith('.tar.gz')) {
       // Attempt to process the tarball file
       processTarballFiles(scene, file, animationController)
-        .then(() => showMessage('Tarball loaded successfully!', 'success'))
-        .catch(() => showMessage('Error loading tarball.', 'error'))
+        .then(() => showToast('Tarball loaded successfully!', 'success'))
+        .catch(() => showToast('Error loading tarball.', 'error'))
     }
     else if (file && file.name.endsWith('.ply')) {
       // Attempt to update the scene with the dropped file
       updateScene(scene, file, animationController)
-        .then(() => showMessage('File loaded successfully!', 'success'))
-        .catch(() => showMessage('Error loading file.', 'error'))
+        .then(() => showToast('File loaded successfully!', 'success'))
+        .catch(() => showToast('Error loading file.', 'error'))
     }
     else {
-      showMessage('Invalid file type. Please drop a .ply file.', 'error')
+      showToast('Invalid file type. Please drop a .ply file.', 'error')
       setLoading(false)
       return
     }
@@ -44,15 +45,6 @@ export function setupDragAndDrop(
   function preventDefaults(event) {
     event.preventDefault()
     event.stopPropagation()
-  }
-
-  // Displays a temporary toast message
-  function showMessage(text, type) {
-    let msg = document.createElement('div')
-    msg.classList.add('toast', type)
-    msg.textContent = text
-    document.body.appendChild(msg)
-    setTimeout(() => msg.remove(), 3000) // Auto-remove the message after 3 seconds
   }
 
   // Detect when a file is dragged into the document

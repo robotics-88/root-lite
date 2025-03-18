@@ -4,6 +4,7 @@ import { AnimationController } from '../animation/animationController.js'
 import { createLighting } from '../lighting.js'
 import { loadMeshFromURL } from '../meshLoader.js'
 import { setLoading } from '../../ui/loading.js'
+import { meshLoaderEvents } from '../meshLoader'
 
 export async function createScene(canvas, filePath) {
   let engine = null,
@@ -29,20 +30,16 @@ export async function createScene(canvas, filePath) {
     if (filePath) {
       try {
         octree = await loadMeshFromURL(scene, filePath, canvas)
-        console.log(octree)
       }
       catch (error) {
         console.error('Failed to load file:', error)
       }
       finally {
-        setLoading(false) // Hide loading UI once the file is processed
+        meshLoaderEvents.addEventListener('octreeLoaded', (event) => {
+          setLoading(false) // Hide loading UI once the file is processed
+        })
       }
     }
-
-    
-
-    
-
 
     // Start the render loop for continuous scene updates
     engine.runRenderLoop(() => scene.render())

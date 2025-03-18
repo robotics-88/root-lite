@@ -9,8 +9,8 @@
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   opacity: 0;
-  z-index:-100;
   transition: opacity 0.4s cubic-bezier(0.74, 0.16, 0, 1.86);
+  pointer-events: none;
 }
 
 #instructions-box h3 {
@@ -20,7 +20,6 @@
 #instructions-box li {
   margin: 0.5rem .5rem;
 }
-
 
 /* Show the box when not hidden */
 #instructions-box.show {
@@ -35,8 +34,6 @@
   content: url('https://img.icons8.com/material-outlined/24/apple-arcade.png');
   vertical-align: middle;
 }
-
-
 
 /* Hide the text and only show the icon on mobile screens */
 @media (max-width: 767px) {
