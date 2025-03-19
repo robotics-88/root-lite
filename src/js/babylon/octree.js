@@ -12,15 +12,18 @@ import * as babylon from '@babylonjs/core'
 export class Octree {
   constructor(pointCloud) {
     this.maxPointsPerOctant = 10 // This can be adjusted later for more recursive optimization
+    this.boundingBox = this.computeBoundingBox(pointCloud)
     this.root = this.build(pointCloud)
+    this.center = null
+    this.center = this.boundingBox.center()
+
   }
 
   // Build the octree from the point cloud
   build(pointCloud) {
-    let boundingBox = this.computeBoundingBox(pointCloud)
-    let rootNode = new OctreeNode(boundingBox)
-    this.center = boundingBox.center()
-
+    console.log(this.boundingBox)
+    let rootNode = new OctreeNode(this.boundingBox)
+    
     // Divide the points into 8 sections (octants)
     this.subdivide(rootNode, pointCloud)
     return rootNode
@@ -39,6 +42,8 @@ export class Octree {
       maxY = Math.max(maxY, p.y)
       maxZ = Math.max(maxZ, p.z)
     })
+    
+
 
     return new BoundingBox(new babylon.Vector3(minX, minY, minZ), new babylon.Vector3(maxX, maxY, maxZ))
   }
@@ -149,6 +154,8 @@ class BoundingBox {
   }
 
   center() {
+    console.log('in center', this.min.add(this.max).scale(0.5))
+
     return this.min.add(this.max).scale(0.5)
   }
 

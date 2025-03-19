@@ -22,7 +22,7 @@ export async function createAnimatedCamera(scene, canvas, octree) {
   // Create a UniversalCamera (similar to FreeCamera but allows extra controls)
   let camera = new babylon.UniversalCamera(
     'animatedCamera',
-    new babylon.Vector3(0, 0, 0), // Initial position
+    new babylon.Vector3(0, 0, -1), // Initial position
     scene,
   )
 

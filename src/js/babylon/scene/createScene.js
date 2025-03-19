@@ -37,6 +37,7 @@ export async function createScene(canvas, filePath) {
       finally {
         meshLoaderEvents.addEventListener('octreeLoaded', (event) => {
           setLoading(false) // Hide loading UI once the file is processed
+          console.log(event.detail)
         })
       }
     }
