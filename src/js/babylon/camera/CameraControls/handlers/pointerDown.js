@@ -15,6 +15,13 @@ export function handlePointerDown(event, camera, state) {
       state.rotationCenter = intersection ? intersection.clone() : camera.target.clone()
       // Smoothly transition the target to rotationCenter
       camera.setTarget(babylon.Vector3.Lerp(camera.target, state.rotationCenter, .01))
+      if (intersection) {
+        console.log('intersection')
+        const sphere = babylon.MeshBuilder.CreateSphere('intersectionSphere', { diameter: 0.2 }, camera.getScene())
+        sphere.position = intersection
+        sphere.material = new babylon.StandardMaterial('green', camera.getScene())
+        sphere.material.diffuseColor = new babylon.Color3(0, 1, 0) // Green color
+      }
     } 
   }
   else state.activeTouches.set(event.pointerId, { x: event.clientX, y: event.clientY })

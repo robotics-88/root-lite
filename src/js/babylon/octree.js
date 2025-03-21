@@ -4,24 +4,28 @@ import * as babylon from '@babylonjs/core'
  * A lot of work left to do here.  This is a dumb version of this.  It is doing a little good
  * but not much.  Need to optimize and take full advantage of the data structure
  * 
- * 1. enlarge bounding boxes and allow for if points fall inside another's bounding box (only need to store one point then
- * as extreme accuracy is not the priority for this)
- * 2. Why does recursion keep breaking it?  Dig deeper and subdivide this so that we're not iterating through hundreds of thousands of entries per click
+ * 1. this does not subdivide the top layer of nodes.  It creates 8 boxes and divides the points up into them.  
+ * 2. searching and finding a collision is around 100-300ms, building is arouns 300ms
+ * 3. this is for a splat with around 3,000,000 points
+ * 
+ * Need to make this subdivide the nodes so that is can further optimize the search
  */
+
 
 export class Octree {
   constructor(pointCloud) {
-    this.maxPointsPerOctant = 10 // This can be adjusted later for more recursive optimization
+    console.time("findBuild Time") // Start the timer
+    this.maxPointsPerOctant = 100 // This can be adjusted later for more efficient subdivision
     this.boundingBox = this.computeBoundingBox(pointCloud)
     this.root = this.build(pointCloud)
     this.center = null
     this.center = this.boundingBox.center()
-
+    console.timeEnd("findBuild Time") // End the timer and log the time taken
+    
   }
 
   // Build the octree from the point cloud
   build(pointCloud) {
-    console.log(this.boundingBox)
     let rootNode = new OctreeNode(this.boundingBox)
     
     // Divide the points into 8 sections (octants)
@@ -43,8 +47,6 @@ export class Octree {
       maxZ = Math.max(maxZ, p.z)
     })
     
-
-
     return new BoundingBox(new babylon.Vector3(minX, minY, minZ), new babylon.Vector3(maxX, maxY, maxZ))
   }
 
@@ -78,8 +80,6 @@ export class Octree {
 
     childNodes.forEach((childNode, i) => {
       childNode.points = pointGroups[i] // Assign points to the child node
-      // Optionally, we could recursively subdivide if the points in the childNode exceed a threshold
-      // this.subdivide(childNode, pointGroups[i])
     })
 
     // Set the child nodes for the current node
@@ -87,10 +87,14 @@ export class Octree {
   }
 
   findIntersection(ray, minDistance = 0.05) {
-    return this._findIntersection(this.root, ray, minDistance)
+    console.time("findIntersection Time") // Start the timer
+    const result = this._findIntersection(this.root, ray, minDistance)
+    console.timeEnd("findIntersection Time") // End the timer and log the time taken
+    return result
   }
-  
+
   _findIntersection(node, ray, minDistance) {
+    
     if (!node.boundingBox.intersectsRay(ray)) {
       return null
     }
