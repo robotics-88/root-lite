@@ -1,5 +1,6 @@
 import * as babylon from '@babylonjs/core'
 import { handleTouchMove } from './touchMove'
+import { getBaseCameraRotation } from '../../../../ui/rotateTool'
 
 export function handlePointerMove(event, camera, state) {
   
@@ -62,4 +63,5 @@ export function handlePointerMove(event, camera, state) {
     // Apply the new position
     camera.position = newPosition
   }
+  camera.rotation.z = getBaseCameraRotation()
 }

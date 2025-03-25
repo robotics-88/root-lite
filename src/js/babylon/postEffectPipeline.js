@@ -10,10 +10,10 @@ export function addPostEffectPipeline(scene, camera) {
   }
 
   pipeline = new babylon.DefaultRenderingPipeline(
-    "defaultPipeline",
+    'defaultPipeline',
     false,
     scene,
-    [camera]
+    [camera],
   )
 
   // Sharpen Settings

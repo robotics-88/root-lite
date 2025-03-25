@@ -11,16 +11,13 @@ import * as babylon from '@babylonjs/core'
  * Need to make this subdivide the nodes so that is can further optimize the search
  */
 
-
 export class Octree {
   constructor(pointCloud) {
-    console.time("findBuild Time") // Start the timer
     this.maxPointsPerOctant = 100 // This can be adjusted later for more efficient subdivision
     this.boundingBox = this.computeBoundingBox(pointCloud)
     this.root = this.build(pointCloud)
     this.center = null
     this.center = this.boundingBox.center()
-    console.timeEnd("findBuild Time") // End the timer and log the time taken
   }
 
   // Build the octree from the point cloud
@@ -86,9 +83,7 @@ export class Octree {
   }
 
   findIntersection(ray, minDistance = 0.05) {
-    console.time("findIntersection Time") // Start the timer
     const result = this._findIntersection(this.root, ray, minDistance)
-    console.timeEnd("findIntersection Time") // End the timer and log the time taken
     return result
   }
 
@@ -157,8 +152,6 @@ class BoundingBox {
   }
 
   center() {
-    console.log('in center', this.min.add(this.max).scale(0.5))
-
     return this.min.add(this.max).scale(0.5)
   }
 

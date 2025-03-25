@@ -14,21 +14,25 @@ export function handlePointerDown(event, camera, state) {
       
       let intersection = state.octree.findIntersection(pickResult.ray)
       state.rotationCenter = intersection ? intersection.clone() : camera.target.clone()
-      camera.rotation.z = getBaseCameraRotation()
+      
       // Smoothly transition the target to rotationCenter
       camera.setTarget(babylon.Vector3.Lerp(camera.target, state.rotationCenter, .01))
-      if (intersection) {
-        console.log('intersection')
-        const sphere = babylon.MeshBuilder.CreateSphere('intersectionSphere', { diameter: 0.2 }, camera.getScene())
-        sphere.position = intersection
-        sphere.material = new babylon.StandardMaterial('green', camera.getScene())
-        sphere.material.diffuseColor = new babylon.Color3(0, 1, 0) // Green color
-      }
+      /**
+       * this code block adds a sphere at the intersection.  It is handy for debugging,
+       * leaving it for DEV for now
+       */
+      // if (intersection) {
+      //   const sphere = babylon.MeshBuilder.CreateSphere('intersectionSphere', { diameter: 0.2 }, camera.getScene())
+      //   sphere.position = intersection
+      //   sphere.material = new babylon.StandardMaterial('green', camera.getScene())
+      //   sphere.material.diffuseColor = new babylon.Color3(0, 1, 0) // Green color
+      // }
     } 
   }
   else state.activeTouches.set(event.pointerId, { x: event.clientX, y: event.clientY })
 
   state.prevX = event.clientX
   state.prevY = event.clientY
+  camera.rotation.z = getBaseCameraRotation()
   saveCameraState(camera.position.clone(), camera.target.clone())
 }

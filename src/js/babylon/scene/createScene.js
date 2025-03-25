@@ -8,7 +8,6 @@ import { setLoading } from '../../ui/loading.js'
 import { meshLoaderEvents } from '../meshLoader'
 import { trackPerformanceStats } from '../../ui/performanceStats.js'
 
-
 export async function createScene(canvas, filePath) {
   let engine = null,
     scene = null,
@@ -76,4 +75,3 @@ export async function createScene(canvas, filePath) {
   // Return the scene, engine, and animation controller for further use
   return { engine, scene, animationController }
 }
-

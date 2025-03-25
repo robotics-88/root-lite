@@ -3,7 +3,7 @@ export default function () {
   let expectedEnvironmentVariables = [
     'VITE_DEFAULT_SPLAT_FILE_PATH',
     'VITE_DEFAULT_IMAGES_FILE_PATH',
-    'VITE_DEFAULT_CAMERAS_FILE_PATH'
+    'VITE_DEFAULT_CAMERAS_FILE_PATH',
   ]
 
   // For each environment variable,
