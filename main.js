@@ -38,7 +38,7 @@ setLoading(true)
   // Handle drag and drop
   setupDragAndDrop(canvas, scene, animationController, updateScene)
 
-  initializeRotateTool(canvas, animationController)
+  initializeRotateTool(animationController)
 
   setupInstructions()
 })()

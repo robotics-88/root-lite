@@ -14,7 +14,6 @@ export function saveCameraState(position, target) {
 
 // Function to undo last move
 export function undoCameraMove(camera) {
- 
   if (cameraHistory.length > 0) {
 
     let lastState = cameraHistory.pop()

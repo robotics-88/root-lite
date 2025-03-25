@@ -6,7 +6,7 @@ import { handlePointerMove } from './handlers/pointerMove'
 import { handleWheel } from './handlers/wheel'
 
 // Using a WeakMap here prevents memory leaks as once the 
-// listeners rare removed from the DOM they can be garbage collected
+// listeners are removed from the DOM they can be garbage collected
 // and don't need to be explicitly removed from the Map
 let listenerRegistry = new WeakMap()
 
