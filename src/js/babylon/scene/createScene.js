@@ -1,10 +1,13 @@
 import * as babylon from '@babylonjs/core'
 import { createAnimatedCamera } from '../camera/camera.js'
+import { addPostEffectPipeline } from '../postEffectPipeline.js'
 import { AnimationController } from '../animation/animationController.js'
 import { createLighting } from '../lighting.js'
 import { loadMeshFromURL } from '../meshLoader.js'
 import { setLoading } from '../../ui/loading.js'
 import { meshLoaderEvents } from '../meshLoader'
+import { trackPerformanceStats } from '../../ui/performanceStats.js'
+
 
 export async function createScene(canvas, filePath) {
   let engine = null,
@@ -18,6 +21,8 @@ export async function createScene(canvas, filePath) {
 
     // Initialize the animated camera and attach it to the scene
     let camera = await createAnimatedCamera(scene, canvas)
+
+    addPostEffectPipeline(scene, camera)
 
     // Initialize the animation controller for handling camera animations
     animationController = new AnimationController(camera)
@@ -37,10 +42,12 @@ export async function createScene(canvas, filePath) {
       finally {
         meshLoaderEvents.addEventListener('octreeLoaded', (event) => {
           setLoading(false) // Hide loading UI once the file is processed
-          console.log(event.detail)
+          
         })
       }
     }
+
+    trackPerformanceStats(scene, engine)
 
     // Start the render loop for continuous scene updates
     engine.runRenderLoop(() => scene.render())
@@ -69,3 +76,4 @@ export async function createScene(canvas, filePath) {
   // Return the scene, engine, and animation controller for further use
   return { engine, scene, animationController }
 }
+

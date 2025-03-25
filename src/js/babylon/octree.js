@@ -21,7 +21,6 @@ export class Octree {
     this.center = null
     this.center = this.boundingBox.center()
     console.timeEnd("findBuild Time") // End the timer and log the time taken
-    
   }
 
   // Build the octree from the point cloud

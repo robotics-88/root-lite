@@ -1,5 +1,3 @@
-// toast.js
-
 export function showToast(message, type = 'info') {
   // Create a toast element
   let msg = document.createElement('div')

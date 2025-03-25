@@ -56,7 +56,38 @@
         </ul>
       </div>
     </div>
-
+    <section id="performance-stats-section">
+      <div id="performance-stats">
+        <h4>Performance Stats</h4>
+        <p>Fps: 
+          <span id="fps"></span>
+        </p>
+        <p>Resolution: 
+          <span id="resolution"></span>
+        </p>
+        <p>Vertices: 
+          <span id="vertices"></span>
+        </p>
+        <p>Memory: 
+          <span id="memory"></span>
+        </p>
+        <p>Frame Time: 
+          <span id="frame-time"></span>
+        </p>
+        <p>Active Meshes: 
+          <span id="active-meshes"></span>
+        </p>
+      </div>
+      <button id="toggle-performance-stats-button" class="button">Performance</button>
+    </section>
+    <button id="rotate-tool-button" class="button">Rotate Tool</button>
+    <div id="rotatable-container">
+      <div id="rotatable">
+          <div class="indicator"></div> <!-- Shows rotation direction -->
+      </div>
+  </div>
+    
+    </section>
     <div id="drop-overlay"></div>
     <div id="loading-spinner"></div>
     <canvas id="render-canvas"></canvas>

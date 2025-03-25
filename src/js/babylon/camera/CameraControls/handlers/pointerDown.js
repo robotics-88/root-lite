@@ -1,4 +1,5 @@
 import { saveCameraState } from '../../cameraHistory'
+import { getBaseCameraRotation } from '../../../../ui/rotateTool'
 import * as babylon from '@babylonjs/core'
 
 export function handlePointerDown(event, camera, state) {
@@ -13,6 +14,7 @@ export function handlePointerDown(event, camera, state) {
       
       let intersection = state.octree.findIntersection(pickResult.ray)
       state.rotationCenter = intersection ? intersection.clone() : camera.target.clone()
+      camera.rotation.z = getBaseCameraRotation()
       // Smoothly transition the target to rotationCenter
       camera.setTarget(babylon.Vector3.Lerp(camera.target, state.rotationCenter, .01))
       if (intersection) {
