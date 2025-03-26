@@ -2,14 +2,15 @@ import { createScene } from './src/js/babylon/scene/createScene.js'
 import { updateScene } from './src/js/babylon/scene/updateScene.js'
 import { setLoading } from './src/js/ui/loading.js'
 import { setupDragAndDrop } from './src/js/ui/dragAndDrop.js'
-import { processTarballFiles } from './src/js/ui/tarball/processTarball.js'
+import { setupInstructions } from './src/js/ui/instructions.js'
+import { processTarballFiles } from './src/js/tarball/processTarball.js'
 
 import checkEnvironmentVariables from './src/js/check-environment-variables.js'
 checkEnvironmentVariables()
 
 const FILE_PATH = import.meta.env.VITE_DEFAULT_SPLAT_FILE_PATH
 
-let canvas = document.getElementById('renderCanvas')
+let canvas = document.getElementById('render-canvas')
 
 // Load initial mesh
 setLoading(true)
@@ -20,7 +21,7 @@ setLoading(true)
 
   // Handle file input
   document
-    .getElementById('fileInput')
+    .getElementById('file-input')
     .addEventListener('change', async (event) => {
       setLoading(true)
       let file = event.target.files[0]
@@ -34,4 +35,6 @@ setLoading(true)
 
   // Handle drag and drop
   setupDragAndDrop(canvas, scene, animationController, updateScene)
+
+  setupInstructions()
 })()

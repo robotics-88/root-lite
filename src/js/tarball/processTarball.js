@@ -1,5 +1,5 @@
 import { extractTarballFiles } from './extractTarball'
-import { updateScene } from '../../babylon/scene/updateScene'
+import { updateScene } from '../babylon/scene/updateScene'
 
 export async function processTarballFiles(scene, file, animationController) {
   try {

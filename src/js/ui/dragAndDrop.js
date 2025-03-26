@@ -1,4 +1,4 @@
-import { processTarballFiles } from './tarball/processTarball'
+import { processTarballFiles } from '../tarball/processTarball'
 import { setLoading } from './loading'
 
 export function setupDragAndDrop(
