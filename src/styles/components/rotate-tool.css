@@ -1,0 +1,50 @@
+#rotate-tool-button {
+  position: absolute;
+  right: 0;
+  margin: .5rem
+}
+
+#rotatable-container {
+  position: absolute;
+  margin: 1rem;
+  top: 10%;
+  right: 10%;
+  width: 15rem;
+  height: 15rem;
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(0.74, 0.16, 0, 1.86);
+  pointer-events: none;
+}
+
+#rotatable-container.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+#rotatable {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(0, 6, 10, .8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  cursor: grab;
+}
+
+#rotatable:active {
+  cursor: grabbing;
+}
+
+.indicator {
+  width: 0;
+  height: 0;
+  border-left: 0.5rem solid transparent;
+  border-right: 0.5rem solid transparent;
+  border-bottom: 1rem solid #52c1b0;
+  position: absolute;
+  top: 0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+}

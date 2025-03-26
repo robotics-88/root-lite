@@ -4,8 +4,10 @@ import { setLoading } from './src/js/ui/loading.js'
 import { setupDragAndDrop } from './src/js/ui/dragAndDrop.js'
 import { setupInstructions } from './src/js/ui/instructions.js'
 import { processTarballFiles } from './src/js/tarball/processTarball.js'
+import { initializeRotateTool } from './src/js/ui/rotateTool.js'
 
 import checkEnvironmentVariables from './src/js/check-environment-variables.js'
+
 checkEnvironmentVariables()
 
 const FILE_PATH = import.meta.env.VITE_DEFAULT_SPLAT_FILE_PATH
@@ -18,7 +20,7 @@ setLoading(true)
 // use an IIFE to avoid top level await which can still cause issues in some browsers
 ;(async () => {
   let { scene, animationController } = await createScene(canvas, FILE_PATH)
-
+  
   // Handle file input
   document
     .getElementById('file-input')
@@ -27,14 +29,16 @@ setLoading(true)
       let file = event.target.files[0]
       if (!file) return
       else if (file.name.endsWith('.ply'))
-        await updateScene(scene, file, animationController)
+        await updateScene(scene, file, animationController )
       else if (file.name.endsWith('.tar.gz'))
         await processTarballFiles(scene, file, animationController)
       setLoading(false)
     })
-
+ 
   // Handle drag and drop
   setupDragAndDrop(canvas, scene, animationController, updateScene)
+
+  initializeRotateTool(animationController)
 
   setupInstructions()
 })()

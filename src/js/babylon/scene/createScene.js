@@ -1,9 +1,12 @@
 import * as babylon from '@babylonjs/core'
 import { createAnimatedCamera } from '../camera/camera.js'
+import { addPostEffectPipeline } from '../postEffectPipeline.js'
 import { AnimationController } from '../animation/animationController.js'
 import { createLighting } from '../lighting.js'
 import { loadMeshFromURL } from '../meshLoader.js'
 import { setLoading } from '../../ui/loading.js'
+import { meshLoaderEvents } from '../meshLoader'
+import { trackPerformanceStats } from '../../ui/performanceStats.js'
 
 export async function createScene(canvas, filePath) {
   let engine = null,
@@ -18,24 +21,32 @@ export async function createScene(canvas, filePath) {
     // Initialize the animated camera and attach it to the scene
     let camera = await createAnimatedCamera(scene, canvas)
 
+    addPostEffectPipeline(scene, camera)
+
     // Initialize the animation controller for handling camera animations
     animationController = new AnimationController(camera)
 
     // Setup lighting in the scene
     createLighting(scene)
+    let octree = null
 
     // Load a mesh from a URL or file, if provided
     if (filePath) {
       try {
-        await loadMeshFromURL(scene, filePath, canvas)
+        octree = await loadMeshFromURL(scene, filePath, canvas)
       }
       catch (error) {
         console.error('Failed to load file:', error)
       }
       finally {
-        setLoading(false) // Hide loading UI once the file is processed
+        meshLoaderEvents.addEventListener('octreeLoaded', (event) => {
+          setLoading(false) // Hide loading UI once the file is processed
+          
+        })
       }
     }
+
+    trackPerformanceStats(scene, engine)
 
     // Start the render loop for continuous scene updates
     engine.runRenderLoop(() => scene.render())
