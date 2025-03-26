@@ -4,11 +4,21 @@ import * as babylon from '@babylonjs/core'
  * Adds animations to the given camera based on a list of positions.
  */
 export function addAnimations(positions, camera) {
-  let { positionAnimation, rotationAnimation } = createAnimations(positions)
+  // If new positions exist, apply them to the camera
+  //turned off for dev, condition should be: positions.length > 0
+  if (false) {
+    let startPosition = positions[0].location
+    let startRotation = positions[0].rotation
 
-  // Attach animations to the camera
-  camera.animations.push(positionAnimation)
-  camera.animations.push(rotationAnimation)
+    camera.position = startPosition
+    camera.rotationQuaternion = startRotation
+
+    let { positionAnimation, rotationAnimation } = createAnimations(positions)
+
+    // Attach animations to the camera
+    camera.animations.push(positionAnimation)
+    camera.animations.push(rotationAnimation)
+  }
 }
 
 /**
@@ -21,7 +31,7 @@ function createAnimations(positions) {
     'position',
     30, // Frames per second (FPS)
     babylon.Animation.ANIMATIONTYPE_VECTOR3,
-    babylon.Animation.ANIMATIONLOOPMODE_CYCLE
+    babylon.Animation.ANIMATIONLOOPMODE_CYCLE,
   )
 
   // Create rotation animation
@@ -30,7 +40,7 @@ function createAnimations(positions) {
     'rotationQuaternion',
     30, // FPS
     babylon.Animation.ANIMATIONTYPE_QUATERNION,
-    babylon.Animation.ANIMATIONLOOPMODE_CYCLE
+    babylon.Animation.ANIMATIONLOOPMODE_CYCLE,
   )
 
   // Generate keyframes for position and rotation
@@ -81,7 +91,8 @@ function createKeys(positions, threshold = 0.2) {
 
       // Recursively add keyframes for the second half
       addKeyframes(midFrame, midPos, midRot, endFrame, nextPos, nextRot)
-    } else {
+    }
+    else {
       // Add keyframes when within threshold
       positionKeys.push({ frame: startFrame, value: pos })
       rotationKeys.push({ frame: startFrame, value: rot })

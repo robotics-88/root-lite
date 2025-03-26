@@ -32,25 +32,38 @@ export async function loadMeshFromURL(scene, url, canvas) {
 }
 
 /**
+ * Utility function to create a Blob URL and load the mesh.
+ * This function handles both file and DataView sources.
+ */
+async function loadMeshFromBuffer(scene, arrayBuffer, canvas) {
+  if (!arrayBuffer) return
+
+  // Create a Blob from the file data, specifying the correct MIME type
+  let blob = new Blob([arrayBuffer], { type: 'model/ply' })
+  let blobUrl = URL.createObjectURL(blob) // Generate a URL for the Blob
+
+  try {
+    return await loadMeshFromURL(scene, blobUrl, canvas) // Load the model from the Blob URL
+  }
+  finally {
+    URL.revokeObjectURL(blobUrl) // Cleanup to free memory
+  }
+}
+
+/**
  * Loads a mesh from a user-selected file.
- * Reads the file and converts it into a Blob URL before loading.
  */
 export async function loadMeshFromFile(scene, file, canvas) {
   if (file) {
-    //Will need to expand this to actually account for the tarball sending .txt files
-
-    // Convert the file into an ArrayBuffer
+    // Convert the file into an ArrayBuffer and use the shared utility function
     let arrayBuffer = await file.arrayBuffer()
-    let uint8Array = new Uint8Array(arrayBuffer)
-
-    // Create a Blob from the file data, specifying the correct MIME type
-    let blob = new Blob([uint8Array], { type: 'model/ply' })
-    let blobUrl = URL.createObjectURL(blob) // Generate a URL for the Blob
-
-    try {
-      return await loadMeshFromURL(scene, blobUrl, canvas) // Load the model from the Blob URL
-    } finally {
-      URL.revokeObjectURL(blobUrl) // Cleanup to free memory
-    }
+    return await loadMeshFromBuffer(scene, arrayBuffer, canvas)
   }
+}
+
+/**
+ * Loads a mesh from a DataView extracted from a tarball.
+ */
+export async function loadMeshFromDataView(scene, arrayBuffer, canvas) {
+  return await loadMeshFromBuffer(scene, arrayBuffer, canvas)
 }

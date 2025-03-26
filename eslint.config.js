@@ -7,11 +7,6 @@ import { FlatCompat } from '@eslint/eslintrc'
 
 let compat = new FlatCompat()
 
-// while eslint and prettier can run in tandem, it is more
-//efficient to run their processes seperately: ESLint for code quality, Prettier for formatting
-//that's why we turn off formatting for ESLint
-import skipFormatting from '@vue/eslint-config-prettier/skip-formatting'
-
 export default [
   {
     name: 'src',
@@ -27,7 +22,6 @@ export default [
     ignores: ['**/dist/**', '**/dist-ssr/**', '**/coverage/**'],
   },
   ...pluginVue.configs['flat/essential'],
-  skipFormatting,
   ...compat.extends('plugin:vue-pug/vue3-recommended'),
   {
     rules: {
@@ -49,6 +43,12 @@ export default [
       'init-declarations': ['error', 'always'], // Enforce that variables are assigned a value on declaration
       'no-undef': 'error', // Disallow use of undeclared variables
       'no-multiple-empty-lines': ['error', { max: 1, maxEOF: 0 }],
+      'brace-style': ['error', 'stroustrup'],
+      'indent': ['error', 2], // Ensure 2 spaces for indentation,
+      'quotes': ['error', 'single'], // Enforce single quotes
+      'semi': ['error', 'never'], // Enforce no semicolons
+      'comma-dangle': ['error', 'always-multiline'], // Enforce trailing commas for ES5
+      'object-curly-spacing': ['error', 'always'], // Enforce spaces inside object literals
     },
   },
 ]

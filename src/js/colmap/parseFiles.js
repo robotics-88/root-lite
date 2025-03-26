@@ -51,6 +51,7 @@ function parseImagesTxt(text) {
   return images
 }
 
+/* eslint-disable no-unused-vars */
 // Function to parse pose.txt
 async function parseCameraPoses(posesURL, scale = 2) {
   let poses = []
@@ -77,7 +78,7 @@ async function parseCameraPoses(posesURL, scale = 2) {
           translation: new babylon.Vector3(
             parseFloat(parts[5]) * scale,
             parseFloat(parts[6]) * scale,
-            parseFloat(parts[7]) * scale
+            parseFloat(parts[7]) * scale,
           ),
           frame: parseInt(parts[8], 10),
           image: parts[9],
@@ -86,36 +87,49 @@ async function parseCameraPoses(posesURL, scale = 2) {
       .filter((pose) => pose !== null)
 
     return poses
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Error parsing camera poses:', error)
   }
 }
-// Function to parse camera positions from images.txt and cameras.txt
-async function parseCameraPositions(imagesURL, camerasURL) {
-  let positions = []
-  try {
-    let imagesText = await fetchTextFile(imagesURL)
 
+// Function to parse camera positions from images.txt and cameras.txt
+async function parseCameraPositions(imagesSource, camerasSource) {
+  try {
+    let imagesText = await getTextContent(imagesSource)
     let imagesArray = parseImagesTxt(imagesText)
 
-    imagesArray.forEach((image) => {
-      positions.push({
-        location: image.translation,
-        rotation: image.rotation,
-      })
-    })
-    return positions
-  } catch (error) {
+    return imagesArray.map((image) => ({
+      location: image.translation,
+      rotation: image.rotation,
+    }))
+  }
+  catch (error) {
     console.error('Error parsing camera positions:', error)
+    return []
   }
 }
 
-// Main function to execute everything
-async function processCameraData(imagesURL, camerasURL, posesURL) {
-  let cameraPositions = await parseCameraPositions(imagesURL, camerasURL)
-  let cameraPoses = await parseCameraPoses(posesURL)
+// Function to parse text from a DataView or fetch from a URL
+async function getTextContent(source) {
+  if (source instanceof DataView) return dataViewToString(source)
+  else if (typeof source === 'string') return fetchTextFile(source)
+  else {
+    throw new Error('Invalid source type: expected DataView or URL string')
+  }
+}
 
-  return { poses: cameraPoses, positions: cameraPositions }
+// Function to convert DataView to a string
+function dataViewToString(dataView) {
+  let decoder = new TextDecoder('utf-8')
+  return decoder.decode(dataView)
+}
+
+// Main function to execute everything
+async function processCameraData(imagesSource, camerasSource) {
+  let cameraPositions = await parseCameraPositions(imagesSource, camerasSource)
+
+  return { positions: cameraPositions }
 }
 
 export { parseCameraPositions, processCameraData }

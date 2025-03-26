@@ -14,9 +14,9 @@ export function addCameraControls(camera, canvas) {
 
   // Handle pointer down events (mouse or touch)
   canvas.addEventListener('pointerdown', (event) => {
-    if (event.pointerType === 'touch') {
+    if (event.pointerType === 'touch')
       activeTouches.set(event.pointerId, { x: event.clientX, y: event.clientY })
-    } else {
+    else {
       if (event.button === 0) isPanning = true // Left click for panning
       if (event.button === 2) isRotating = true // Right click for rotating
     }
@@ -41,12 +41,13 @@ export function addCameraControls(camera, canvas) {
       // Adjust camera position based on movement
       let panFactor = 0.0005 //adjust to change panning speed
       camera.position.addInPlace(
-        camera.getDirection(babylon.Axis.X).scale(-deltaX * panFactor)
+        camera.getDirection(babylon.Axis.X).scale(-deltaX * panFactor),
       )
       camera.position.addInPlace(
-        camera.getDirection(babylon.Axis.Y).scale(deltaY * panFactor)
+        camera.getDirection(babylon.Axis.Y).scale(deltaY * panFactor),
       )
-    } else if (isRotating) {
+    }
+    else if (isRotating) {
       // Adjust camera rotation based on movement
       let rotateFactor = 0.001 //adjust to change rotation speed
       camera.rotationQuaternion =
@@ -58,7 +59,7 @@ export function addCameraControls(camera, canvas) {
       camera.rotationQuaternion = babylon.Quaternion.RotationYawPitchRoll(
         eulerRotation.y,
         eulerRotation.x,
-        eulerRotation.z
+        eulerRotation.z,
       )
     }
   })
@@ -89,17 +90,18 @@ export function addCameraControls(camera, canvas) {
       //single touch - panning
       let panFactor = 0.001
       camera.position.addInPlace(
-        camera.getDirection(babylon.Axis.X).scale(-deltaX * panFactor)
+        camera.getDirection(babylon.Axis.X).scale(-deltaX * panFactor),
       )
       camera.position.addInPlace(
-        camera.getDirection(babylon.Axis.Y).scale(deltaY * panFactor)
+        camera.getDirection(babylon.Axis.Y).scale(deltaY * panFactor),
       )
-    } else if (touchCount === 2) {
+    }
+    else if (touchCount === 2) {
       //two finger touch - zooming
       let touchArray = [...activeTouches.values()]
       let newDistance = Math.hypot(
         touchArray[0].x - touchArray[1].x,
-        touchArray[0].y - touchArray[1].y
+        touchArray[0].y - touchArray[1].y,
       )
 
       if (prevDistance !== null) {
@@ -123,9 +125,9 @@ export function addCameraControls(camera, canvas) {
 
   // Handle pointer cancellation events (e.g., losing focus)
   canvas.addEventListener('pointercancel', (event) =>
-    activeTouches.delete(event.pointerId)
+    activeTouches.delete(event.pointerId),
   )
   canvas.addEventListener('lostpointercapture', (event) =>
-    activeTouches.delete(event.pointerId)
+    activeTouches.delete(event.pointerId),
   )
 }

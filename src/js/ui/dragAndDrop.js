@@ -1,27 +1,43 @@
-export function setupDragAndDrop(canvas, scene, animationController, updateScene) {
+import { processTarballFiles } from './tarball/processTarball'
+import { setLoading } from './loading'
+
+export function setupDragAndDrop(
+  canvas,
+  scene,
+  animationController,
+  updateScene,
+) {
   let dragCounter = 0 // Keeps track of drag events to determine when to show/hide the overlay
   let dropOverlay = document.getElementById('drop-overlay')
 
   // Handles the file drop event
-  function handleFileDrop(event) {
+  async function handleFileDrop(event) {
     event.preventDefault()
     event.stopPropagation()
     dragCounter = 0
 
     let file = event.dataTransfer.files[0] // Get the first dropped file
-    if (!file || !file.name.endsWith('.ply')) {
+    setLoading(true)
+    showMessage('Loading file...', 'info')
+    if (file && file.name.endsWith('.tar.gz')) {
+      // Attempt to process the tarball file
+      processTarballFiles(scene, file, animationController)
+        .then(() => showMessage('Tarball loaded successfully!', 'success'))
+        .catch(() => showMessage('Error loading tarball.', 'error'))
+    }
+    else if (file && file.name.endsWith('.ply')) {
+      // Attempt to update the scene with the dropped file
+      updateScene(scene, file, animationController)
+        .then(() => showMessage('File loaded successfully!', 'success'))
+        .catch(() => showMessage('Error loading file.', 'error'))
+    }
+    else {
       showMessage('Invalid file type. Please drop a .ply file.', 'error')
+      setLoading(false)
       return
     }
-
-    showMessage('Loading file...', 'info')
-
-    // Attempt to update the scene with the dropped file
-    updateScene(scene, file, animationController)
-      .then(() => showMessage('File loaded successfully!', 'success'))
-      .catch(() => showMessage('Error loading file.', 'error'))
-
-    dropOverlay.classList.toggle('visible') 
+    dropOverlay.classList.toggle('visible')
+    setLoading(false)
   }
 
   // Prevents default browser behavior for drag events

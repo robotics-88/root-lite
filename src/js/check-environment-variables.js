@@ -11,7 +11,7 @@ export default function () {
     // if the value is `undefined` throw an error
     if (import.meta.env[expectedEnvironmentVariable] == undefined) {
       throw new Error(
-        `Environment variable ${expectedEnvironmentVariable} not defined`
+        `Environment variable ${expectedEnvironmentVariable} not defined`,
       )
     }
   }

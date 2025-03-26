@@ -1,3 +1,7 @@
+import * as babylon from '@babylonjs/core'
+import { processCameraData } from '../../colmap/parseFiles'
+import { addAnimations } from './animation'
+
 /**
  * Animation Controller to handle playback controls (start, pause, resume, speed adjustment).
  */
@@ -15,9 +19,8 @@ export class AnimationController {
   play() {
     if (!this.animationTarget || !this.animationTarget.animations.length) return
 
-    if (this.animatable) {
-      this.animatable.restart()
-    } else {
+    if (this.animatable) this.animatable.restart()
+    else {
       let length = this.animationTarget.animations[0]._keys.length
       this.animatable = this.animationTarget
         .getScene()
@@ -63,6 +66,31 @@ export class AnimationController {
       this.animatable.stop()
       this.animatable = null
     }
+  }
+
+  /**
+   * Resets the camera and reloads animation data.
+   */
+  async resetCamera(imagesDataView, camerasDataView) {
+    if (!this.animationTarget) return
+
+    // Stop existing animations
+    this.stop()
+
+    // Reset the camera's position and rotation
+    this.animationTarget.position = new babylon.Vector3(0, 0, 0)
+    this.animationTarget.rotationQuaternion = null
+
+    // Remove all existing animations from the camera
+    this.animationTarget.animations = []
+
+    // Process new camera pose data
+    let { positions } = await processCameraData(imagesDataView, camerasDataView)
+
+    addAnimations(positions, this.animationTarget)
+
+    // Restart animation
+    this.play()
   }
 
   /**

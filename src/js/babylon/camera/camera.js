@@ -23,7 +23,7 @@ export async function createAnimatedCamera(scene, canvas) {
   let camera = new babylon.UniversalCamera(
     'animatedCamera',
     new babylon.Vector3(0, 0, 0), // Initial position
-    scene
+    scene,
   )
 
   // Attach control to canvas
@@ -43,21 +43,8 @@ export async function createAnimatedCamera(scene, canvas) {
   // Add custom camera controls
   addCameraControls(camera, canvas)
 
-  // If camera positions are available, use them to animate the camera
-  // Disabled for now for troubleshooting
-  // Condition should check if positions.length > 0
-  if (false) {
-    // Set the initial position from the first recorded pose
-    let startPosition = positions[0].location
-    camera.position = startPosition
-
-    // Set the initial rotation from the first recorded pose
-    let startRotation = positions[0].rotation
-    camera.rotationQuaternion = startRotation
-
-    // Apply animations to the camera using the recorded positions
-    addAnimations(positions, camera)
-  }
+  // Apply animations to the camera using the recorded positions
+  addAnimations(positions, camera)
 
   return camera
 }
