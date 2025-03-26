@@ -3,7 +3,6 @@ import { addAnimations } from '../animation/animation'
 import { processCameraData } from '../../colmap/parseFiles'
 import { addCameraControls } from './cameraControls'
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 const IMAGES_FILE_PATH = import.meta.env.VITE_DEFAULT_IMAGES_FILE_PATH
 const CAMERAS_FILE_PATH = import.meta.env.VITE_DEFAULT_CAMERAS_FILE_PATH
 
@@ -14,8 +13,8 @@ export async function createAnimatedCamera(scene, canvas) {
   /**
    * URLs to COLMAP output files (for development).
    */
-  let imagesURL = `${API_BASE_URL}${IMAGES_FILE_PATH}`
-  let camerasURL = `${API_BASE_URL}${CAMERAS_FILE_PATH}`
+  let imagesURL = `${IMAGES_FILE_PATH}`
+  let camerasURL = `$${CAMERAS_FILE_PATH}`
 
   // Fetch and process camera pose data from COLMAP files
   let { positions } = await processCameraData(imagesURL, camerasURL)

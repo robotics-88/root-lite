@@ -1,6 +1,10 @@
 export default function () {
   // Array of each environment variable we expect
-  let expectedEnvironmentVariables = ['VITE_API_BASE_URL', 'VITE_DEFAULT_SPLAT_FILE_PATH', 'VITE_DEFAULT_IMAGES_FILE_PATH', 'VITE_DEFAULT_CAMERAS_FILE_PATH']
+  let expectedEnvironmentVariables = [
+    'VITE_DEFAULT_SPLAT_FILE_PATH',
+    'VITE_DEFAULT_IMAGES_FILE_PATH',
+    'VITE_DEFAULT_CAMERAS_FILE_PATH',
+  ]
 
   // For each environment variable,
   for (let expectedEnvironmentVariable of expectedEnvironmentVariables) {

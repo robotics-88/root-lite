@@ -7,17 +7,16 @@ import * as babylon from '@babylonjs/core'
 export function addCameraControls(camera, canvas) {
   let isPanning = false
   let isRotating = false
-  let prevX = null, 
-      prevY = null,
-      prevDistance = null
+  let prevX = null,
+    prevY = null,
+    prevDistance = null
   let activeTouches = new Map()
 
   // Handle pointer down events (mouse or touch)
   canvas.addEventListener('pointerdown', (event) => {
     if (event.pointerType === 'touch') {
       activeTouches.set(event.pointerId, { x: event.clientX, y: event.clientY })
-    } 
-    else {
+    } else {
       if (event.button === 0) isPanning = true // Left click for panning
       if (event.button === 2) isRotating = true // Right click for rotating
     }
@@ -47,11 +46,11 @@ export function addCameraControls(camera, canvas) {
       camera.position.addInPlace(
         camera.getDirection(babylon.Axis.Y).scale(deltaY * panFactor)
       )
-    } 
-    else if (isRotating) {
+    } else if (isRotating) {
       // Adjust camera rotation based on movement
       let rotateFactor = 0.001 //adjust to change rotation speed
-      camera.rotationQuaternion = camera.rotationQuaternion || babylon.Quaternion.Identity() //double check rotationQuaternion is defined
+      camera.rotationQuaternion =
+        camera.rotationQuaternion || babylon.Quaternion.Identity() //double check rotationQuaternion is defined
       let eulerRotation = camera.rotationQuaternion.toEulerAngles()
       eulerRotation.y -= deltaX * rotateFactor
       eulerRotation.x -= deltaY * rotateFactor
@@ -73,8 +72,8 @@ export function addCameraControls(camera, canvas) {
     }
   })
 
-   /**
-   * Handles touch move events for both single-touch (panning) and 
+  /**
+   * Handles touch move events for both single-touch (panning) and
    * multi-touch (zooming) gestures.
    */
   function handleTouchMove(event) {
@@ -95,8 +94,7 @@ export function addCameraControls(camera, canvas) {
       camera.position.addInPlace(
         camera.getDirection(babylon.Axis.Y).scale(deltaY * panFactor)
       )
-    } 
-    else if (touchCount === 2) {
+    } else if (touchCount === 2) {
       //two finger touch - zooming
       let touchArray = [...activeTouches.values()]
       let newDistance = Math.hypot(

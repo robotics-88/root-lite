@@ -22,11 +22,3 @@
     transform: translate(-50%, -50%) rotate(360deg);
   }
 }
-
-canvas {
-  cursor: grab; /* Default cursor for navigation */
-}
-
-canvas:active {
-  cursor: grabbing; /* While dragging */
-}

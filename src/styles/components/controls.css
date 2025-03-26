@@ -1,0 +1,5 @@
+/* Controls Styles */
+#controls {
+  position: absolute;
+  z-index: 10;
+}

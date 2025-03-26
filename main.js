@@ -1,7 +1,7 @@
 import { createScene } from './src/js/babylon/scene/createScene.js'
 import { updateScene } from './src/js/babylon/scene/updateScene.js'
-import { loadMeshFromURL, loadMeshFromFile } from './src/js/babylon/meshLoader.js'
 import { setLoading } from './src/js/ui/loading.js'
+import { setupDragAndDrop } from './src/js/ui/dragAndDrop.js'
 
 import checkEnvironmentVariables from './src/js/check-environment-variables.js'
 checkEnvironmentVariables()
@@ -12,17 +12,22 @@ let canvas = document.getElementById('renderCanvas')
 
 // Load initial mesh
 setLoading(true)
-//loadMeshFromURL(scene, FILE_PATH, canvas).finally(() => setLoading(false))
-let { engine, scene, animationController } = await createScene(canvas, {
-  filePath: FILE_PATH,
-})
 
-// Handle file input
-document
-  .getElementById('fileInput')
-  .addEventListener('change', async (event) => {
-    let file = event.target.files[0]
-    if (!file) return
-
-    await updateScene(scene, file, animationController)
+// use an IIFE to avoid top level await which can still cause issues in some browsers
+;(async () => {
+  let { scene, animationController } = await createScene(canvas, {
+    filePath: FILE_PATH,
   })
+
+  // Handle file input
+  document
+    .getElementById('fileInput')
+    .addEventListener('change', async (event) => {
+      let file = event.target.files[0]
+      if (!file) return
+
+      await updateScene(scene, file, animationController)
+    })
+  // Handle drag and drop
+  setupDragAndDrop(canvas, scene, animationController, updateScene)
+})()
