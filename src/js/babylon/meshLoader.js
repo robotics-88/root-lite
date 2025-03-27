@@ -1,6 +1,7 @@
-import * as babylon from '@babylonjs/core'
-import '@babylonjs/loaders'
-import { Octree } from './octree'
+import { Vector3 } from '@babylonjs/core/Maths/math.vector'
+import '@babylonjs/loaders/SPLAT'
+
+import { Octree } from '../dataProcessing/Octree'
 let loadedMeshes = []
 
 let octree = null
@@ -19,33 +20,25 @@ export let meshLoaderEvents = new EventTarget()
  * Loads a mesh into the Babylon.js scene from a given url.
  */
 export async function loadMeshFromURL(scene, url, canvas) {
-  let scale = 1 // Scaling factor for the mesh
   clearPreviousMeshes()
+  let { SceneLoader } = await import('@babylonjs/core')
 
-  babylon.SceneLoader.ImportMeshAsync('', url, '', scene, null, '.ply')
+  SceneLoader.ImportMeshAsync('', url, '', scene, null, '.ply')
     .then((result) => {
       // Access the loaded meshes
       result.meshes.forEach((mesh) => {
         // Apply scaling factor to each mesh
-        mesh.scaling = new babylon.Vector3(scale, scale, scale)
-        mesh.isPickable = true // the raytracing for the splat image is very inaccurate and creates distracting issues
+        mesh.isPickable = false // the raytracing for the splat image is very inaccurate and creates distracting issues
         // Extract positions from _splatPositions array
-        let positions = mesh._splatPositions // Array of 3D positions for each point in your point cloud
+        let positions = mesh._splatPositions // Array of 3D positions for each point in the point cloud
         let points = []
         for(let i = 0; i< positions.length; i+=4){
-          points.push(new babylon.Vector3(positions[i], positions[i+1], positions[i+2]))
+          if(positions[i] !== 0 && positions[i+1] !== 0 && positions[i+2] !== 0)
+            points.push(new Vector3(positions[i], positions[i+1], positions[i+2]))
         }
-        //LEAVING THIS HERE FOR DEV, FOR NOW
-        // pointCloud = new babylon.PointsCloudSystem("pointCloud", 2, scene)
-        // pointCloud.addPoints(points.length, (particle) => {
-        //   particle.position = points.pop()
-        // })
-        
-        // pointCloud.buildMeshAsync().then(function() {
-        //   pointCloud.isVisible = true
-        // })
+        console.log(points.length)
         octree = new Octree(points)
-
+        console.log(octree.countPoints())
         meshLoaderEvents.dispatchEvent(new CustomEvent('octreeLoaded', { detail: octree }))
       })
       loadedMeshes = result.meshes // Store so they can be cleared later

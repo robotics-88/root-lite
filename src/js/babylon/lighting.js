@@ -1,9 +1,10 @@
-import * as babylon from '@babylonjs/core'
+import { HemisphericLight } from '@babylonjs/core/Lights'
+import { Vector3 } from '@babylonjs/core/Maths/math.vector'
 
 export function createLighting(scene) {
-  return new babylon.HemisphericLight(
+  return new HemisphericLight(
     'light',
-    new babylon.Vector3(0, 1, 0),
+    new Vector3(0, 1, 0),
     scene,
   )
 }

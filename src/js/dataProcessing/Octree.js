@@ -1,4 +1,4 @@
-import * as babylon from '@babylonjs/core'
+import { Vector3 } from '@babylonjs/core/Maths/math.vector'
 
 /**
  * A lot of work left to do here.  This is a dumb version of this.  It is doing a little good
@@ -25,7 +25,7 @@ export class Octree {
     let rootNode = new OctreeNode(this.boundingBox)
     
     // Divide the points into 8 sections (octants)
-    this.subdivide(rootNode, pointCloud)
+    rootNode.subdivide(pointCloud, this.maxPointsPerOctant)
     return rootNode
   }
 
@@ -43,47 +43,15 @@ export class Octree {
       maxZ = Math.max(maxZ, p.z)
     })
     
-    return new BoundingBox(new babylon.Vector3(minX, minY, minZ), new babylon.Vector3(maxX, maxY, maxZ))
-  }
-
-  // Subdivide the octree into 8 sections (octants) and assign points to them
-  subdivide(node, pointCloud) {
-    let halfSize = node.boundingBox.size().scale(0.5)
-    let center = node.boundingBox.center()
-
-    // Create 8 child nodes (octants)
-    let childNodes = [
-      new OctreeNode(new BoundingBox(center, halfSize)),
-      new OctreeNode(new BoundingBox(center.add(new babylon.Vector3(halfSize.x, 0, 0)), halfSize)),
-      new OctreeNode(new BoundingBox(center.add(new babylon.Vector3(0, halfSize.y, 0)), halfSize)),
-      new OctreeNode(new BoundingBox(center.add(new babylon.Vector3(0, 0, halfSize.z)), halfSize)),
-      new OctreeNode(new BoundingBox(center.add(new babylon.Vector3(-halfSize.x, 0, 0)), halfSize)),
-      new OctreeNode(new BoundingBox(center.add(new babylon.Vector3(0, -halfSize.y, 0)), halfSize)),
-      new OctreeNode(new BoundingBox(center.add(new babylon.Vector3(0, 0, -halfSize.z)), halfSize)),
-      new OctreeNode(new BoundingBox(center.add(new babylon.Vector3(-halfSize.x, -halfSize.y, -halfSize.z)), halfSize)),
-    ]
-
-    // Assign points to the corresponding octants
-    let pointGroups = [[], [], [], [], [], [], [], []]
-    pointCloud.forEach(p => {
-      for (let i = 0; i < 8; i++) {
-        if (childNodes[i].boundingBox.containsPoint(p)) {
-          pointGroups[i].push(p)
-          break
-        }
-      }
-    })
-
-    childNodes.forEach((childNode, i) => {
-      childNode.points = pointGroups[i] // Assign points to the child node
-    })
-
-    // Set the child nodes for the current node
-    node.children = childNodes
+    return new BoundingBox(new Vector3(minX, minY, minZ), new Vector3(maxX, maxY, maxZ))
   }
 
   findIntersection(ray, minDistance = 0.05) {
+    const start = performance.now() // Start time
     const result = this._findIntersection(this.root, ray, minDistance)
+    const end = performance.now() // End time
+  
+    console.log(`findIntersection execution time: ${(end - start).toFixed(3)} ms`)
     return result
   }
 
@@ -99,12 +67,12 @@ export class Octree {
     if (node.points.length > 0) {
       for (let point of node.points) {
         let closestOnRay = this._closestPointOnRay(ray, point)
-        let distanceToRay = babylon.Vector3.Distance(point, closestOnRay)  // Perpendicular distance to the ray
-        let originDistance = babylon.Vector3.Distance(ray.origin, point)   // Distance from the camera (ray origin)
+        let distanceToRay = Vector3.Distance(point, closestOnRay)  // Perpendicular distance to the ray
+        let originDistance = Vector3.Distance(ray.origin, point)   // Distance from the camera (ray origin)
   
         // Only consider points that are very close to the ray (distanceToRay should be near 0)
         if (distanceToRay < 0.008 && originDistance > minDistance) {  // Threshold to allow small error
-          let projection = babylon.Vector3.Dot(point.subtract(ray.origin), ray.direction)
+          let projection = Vector3.Dot(point.subtract(ray.origin), ray.direction)
   
           // Ensure the point is in front of the ray (in the direction of the ray)
           if (projection > 0 && projection < closestDistance) {
@@ -121,7 +89,7 @@ export class Octree {
       if (child) {
         let intersection = this._findIntersection(child, ray, minDistance)
         if (intersection) {
-          let intersectionDist = babylon.Vector3.Distance(ray.origin, intersection)
+          let intersectionDist = Vector3.Distance(ray.origin, intersection)
           if (intersectionDist < closestDistance && intersectionDist > minDistance) {
             closestDistance = intersectionDist
             closestPoint = intersection
@@ -136,8 +104,26 @@ export class Octree {
   // Helper function to get closest point on the ray from the point
   _closestPointOnRay(ray, point) {
     let toPoint = point.subtract(ray.origin)
-    let projectionLength = babylon.Vector3.Dot(toPoint, ray.direction)  // Projection of point onto ray direction
+    let projectionLength = Vector3.Dot(toPoint, ray.direction)  // Projection of point onto ray direction
     return ray.origin.add(ray.direction.scale(projectionLength))  // Get the closest point on the ray
+  }
+
+  // Method to count all points in all octree nodes
+  countPoints() {
+    return this._countPoints(this.root)
+  }
+
+  _countPoints(node) {
+    let count = node.points.length
+
+    // Recursively count points in child nodes
+    for (let child of node.children) {
+      if (child) {
+        count += this._countPoints(child)
+      }
+    }
+
+    return count
   }
 }
 // Bounding Box Class
@@ -203,37 +189,64 @@ export class OctreeNode {
     return this.children.length === 0
   }
 
-  // Add a point to this node
-  addPoint(point) {
+  tryAddPoint(point) {
+    if (point.x === 0 && point.y === 0 && point.z === 0) {
+      // Skip this point, or log it for debugging
+      return false
+    }
+    
     if (this.boundingBox.containsPoint(point)) {
       this.points.push(point)
       return true
     }
     return false
   }
-
-  // Subdivide the node into 8 octants
-  subdivide() {
+  
+  // Modify the subdivision to handle (0, 0, 0) points
+  subdivide(pointCloud, maxPointsPerOctant) {
     if (!this.isLeaf()) return // Already subdivided
-
+  
     let halfSize = this.boundingBox.size().scale(0.5)
     let center = this.boundingBox.center()
-
+  
+    let quarterSize = new Vector3(
+      halfSize.x / 2,
+      halfSize.y / 2,
+      halfSize.z / 2,
+    )
+  
     let offsets = [
-      new babylon.Vector3(halfSize.x, halfSize.y, halfSize.z),
-      new babylon.Vector3(-halfSize.x, halfSize.y, halfSize.z),
-      new babylon.Vector3(halfSize.x, -halfSize.y, halfSize.z),
-      new babylon.Vector3(-halfSize.x, -halfSize.y, halfSize.z),
-      new babylon.Vector3(halfSize.x, halfSize.y, -halfSize.z),
-      new babylon.Vector3(-halfSize.x, halfSize.y, -halfSize.z),
-      new babylon.Vector3(halfSize.x, -halfSize.y, -halfSize.z),
-      new babylon.Vector3(-halfSize.x, -halfSize.y, -halfSize.z),
+      new Vector3(quarterSize.x, quarterSize.y, quarterSize.z),  // Front-Right-Top
+      new Vector3(-quarterSize.x, quarterSize.y, quarterSize.z), // Front-Left-Top
+      new Vector3(quarterSize.x, -quarterSize.y, quarterSize.z), // Front-Right-Bottom
+      new Vector3(-quarterSize.x, -quarterSize.y, quarterSize.z),// Front-Left-Bottom
+      new Vector3(quarterSize.x, quarterSize.y, -quarterSize.z), // Back-Right-Top
+      new Vector3(-quarterSize.x, quarterSize.y, -quarterSize.z),// Back-Left-Top
+      new Vector3(quarterSize.x, -quarterSize.y, -quarterSize.z),// Back-Right-Bottom
+      new Vector3(-quarterSize.x, -quarterSize.y, -quarterSize.z), // Back-Left-Bottom
     ]
-
-    for (let i = 0; i < 8; i++) {
-      let min = center.add(offsets[i].scale(-1))
-      let max = center.add(offsets[i])
-      this.children.push(new OctreeNode(new BoundingBox(min, max)))
+  
+    let childNodes = offsets.map(offset => {
+      let childCenter = center.add(offset)
+      let childMin = childCenter.subtract(quarterSize)
+      let childMax = childCenter.add(quarterSize)
+  
+      return new OctreeNode(new BoundingBox(childMin, childMax))
+    })
+    
+    while(pointCloud.length > 0){
+      let point = pointCloud.pop()
+      childNodes.forEach((node) => {
+        if(node.tryAddPoint(point)) return
+      })
     }
+  
+    childNodes.forEach(node => {
+      if (node.points.length > maxPointsPerOctant) {
+        node.subdivide(node.points, maxPointsPerOctant)
+      }
+    })
+  
+    this.children = childNodes // Update the current node with subdivided children
   }
 }

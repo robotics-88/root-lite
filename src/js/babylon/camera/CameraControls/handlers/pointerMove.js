@@ -1,4 +1,6 @@
-import * as babylon from '@babylonjs/core'
+import { Vector3 } from '@babylonjs/core/Maths/math.vector'
+import { Quaternion } from '@babylonjs/core/Maths'
+import { Axis } from '@babylonjs/core/Maths/math.axis'
 import { handleTouchMove } from './touchMove'
 import { getBaseCameraRotation } from '../../../../ui/rotateTool'
 
@@ -19,10 +21,10 @@ export function handlePointerMove(event, camera, state) {
   // Adjust camera position based on movement
     let panFactor = 0.0015 //adjust to change panning speed
     camera.position.addInPlace(
-      camera.getDirection(babylon.Axis.X).scale(-deltaX * panFactor),
+      camera.getDirection(Axis.X).scale(-deltaX * panFactor),
     )
     camera.position.addInPlace(
-      camera.getDirection(babylon.Axis.Y).scale(deltaY * panFactor),
+      camera.getDirection(Axis.Y).scale(deltaY * panFactor),
     )
   }
   else if (state.isRotating) {
@@ -33,16 +35,16 @@ export function handlePointerMove(event, camera, state) {
     let radius = direction.length() // Maintain distance
 
     // Convert camera's rotation quaternion to local basis vectors
-    let right = camera.getDirection(babylon.Axis.X)
-    let up = camera.getDirection(babylon.Axis.Y)
+    let right = camera.getDirection(Axis.X)
+    let up = camera.getDirection(Axis.Y)
 
     // Reverse x and y rotations for grab-and-drag feel
     let yaw = deltaX * rotateFactor // Negative for natural drag
     let pitch = deltaY * rotateFactor // Negative for natural drag
 
     // Create rotation quaternions relative to the camera’s local axes
-    let yawQuat = babylon.Quaternion.RotationAxis(up, yaw)
-    let pitchQuat = babylon.Quaternion.RotationAxis(right, pitch)
+    let yawQuat = Quaternion.RotationAxis(up, yaw)
+    let pitchQuat = Quaternion.RotationAxis(right, pitch)
 
     // Apply rotations
     let finalRotation = yawQuat.multiply(pitchQuat)
@@ -53,10 +55,10 @@ export function handlePointerMove(event, camera, state) {
     let newPosition = state.rotationCenter.add(direction)
 
     // Gradually move target until it's close enough
-    let newTarget = babylon.Vector3.Lerp(camera.target, state.rotationCenter, 0.1)
+    let newTarget = Vector3.Lerp(camera.target, state.rotationCenter, 0.1)
 
     // Lock target when close enough
-    if (babylon.Vector3.Distance(newTarget, state.rotationCenter) < 0.01) newTarget = state.rotationCenter
+    if (Vector3.Distance(newTarget, state.rotationCenter) < 0.01) newTarget = state.rotationCenter
     
     camera.setTarget(newTarget)
 

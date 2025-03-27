@@ -1,4 +1,4 @@
-import * as babylon from '@babylonjs/core'
+
 import { createAnimatedCamera } from '../camera/camera.js'
 import { addPostEffectPipeline } from '../postEffectPipeline.js'
 import { AnimationController } from '../animation/animationController.js'
@@ -8,15 +8,39 @@ import { setLoading } from '../../ui/loading.js'
 import { meshLoaderEvents } from '../meshLoader'
 import { trackPerformanceStats } from '../../ui/performanceStats.js'
 
+let config = {
+  camera: {
+    alpha: -Math.PI / 4,
+    beta:  Math.PI / 3,
+    radius: 4,
+    upperRadiusLimit: 7.0,
+    lowerRadiusLimit: 2.0, // Increased from 1.1 to 2.0 to prevent camera from getting too close
+    minZ: 0.1,
+    maxZ: 1000,
+  },
+  engine: {
+    // (Suggestion #10) Fine-tune engine creation
+    preserveDrawingBuffer: true,
+    stencil: true,
+    disableWebGL2Support: false,
+    antialias: false, // Disable built-in anti-aliasing to use FXAA
+  },
+}
+
 export async function createScene(canvas, filePath) {
+  let { Engine, Scene, PointerEventTypes } = await import('@babylonjs/core')
   let engine = null,
     scene = null,
     animationController = null
 
   try {
-    // Create the Babylon.js rendering engine
-    engine = new babylon.Engine(canvas, true)
-    scene = new babylon.Scene(engine)
+    // Create the js rendering engine
+    engine = new Engine(canvas, true, {
+      preserveDrawingBuffer: true,
+      stencil: true,
+      antialias: false, 
+    })
+    scene = new Scene(engine)
 
     // Initialize the animated camera and attach it to the scene
     let camera = await createAnimatedCamera(scene, canvas)
@@ -41,6 +65,7 @@ export async function createScene(canvas, filePath) {
       finally {
         meshLoaderEvents.addEventListener('octreeLoaded', (event) => {
           setLoading(false) // Hide loading UI once the file is processed
+          console.log(event.detail)
           
         })
       }
@@ -60,7 +85,7 @@ export async function createScene(canvas, filePath) {
     // Pause animation when the user interacts with the scene
     scene.onPointerObservable.add(() => {
       animationController.pause()
-    }, babylon.PointerEventTypes.POINTERDOWN)
+    }, PointerEventTypes.POINTERDOWN)
 
     // Resume animation when the user presses 'Space'
     window.addEventListener('keydown', (event) => {

@@ -1,4 +1,6 @@
-import * as babylon from '@babylonjs/core'
+import { UniversalCamera } from '@babylonjs/core/Cameras/universalCamera'
+import { Vector3 } from '@babylonjs/core/Maths/math.vector'
+
 import { addAnimations } from '../animation/animation'
 import { processCameraData } from '../../colmap/parseFiles'
 import { addCameraControls } from './CameraControls/cameraControls'
@@ -20,9 +22,9 @@ export async function createAnimatedCamera(scene, canvas, octree) {
   let { positions } = await processCameraData(imagesURL, camerasURL)
 
   // Create a UniversalCamera (similar to FreeCamera but allows extra controls)
-  let camera = new babylon.UniversalCamera(
+  let camera = new UniversalCamera(
     'animatedCamera',
-    new babylon.Vector3(0, 0, -1), // Initial position
+    new Vector3(0, 0, -1), // Initial position
     scene,
   )
 
