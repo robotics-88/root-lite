@@ -46,7 +46,7 @@ export class Octree {
     return new BoundingBox(new Vector3(minX, minY, minZ), new Vector3(maxX, maxY, maxZ))
   }
 
-  findIntersection(ray, minDistance = 0.05) {
+  findIntersection(ray, minDistance = 0.005) {
     const start = performance.now() // Start time
     const result = this._findIntersection(this.root, ray, minDistance)
     const end = performance.now() // End time
@@ -106,24 +106,6 @@ export class Octree {
     let toPoint = point.subtract(ray.origin)
     let projectionLength = Vector3.Dot(toPoint, ray.direction)  // Projection of point onto ray direction
     return ray.origin.add(ray.direction.scale(projectionLength))  // Get the closest point on the ray
-  }
-
-  // Method to count all points in all octree nodes
-  countPoints() {
-    return this._countPoints(this.root)
-  }
-
-  _countPoints(node) {
-    let count = node.points.length
-
-    // Recursively count points in child nodes
-    for (let child of node.children) {
-      if (child) {
-        count += this._countPoints(child)
-      }
-    }
-
-    return count
   }
 }
 // Bounding Box Class

@@ -5,7 +5,6 @@ import { AnimationController } from '../animation/animationController.js'
 import { createLighting } from '../lighting.js'
 import { loadMeshFromURL } from '../meshLoader.js'
 import { setLoading } from '../../ui/loading.js'
-import { meshLoaderEvents } from '../meshLoader'
 import { trackPerformanceStats } from '../../ui/performanceStats.js'
 
 let config = {
@@ -42,13 +41,7 @@ export async function createScene(canvas, filePath) {
     })
     scene = new Scene(engine)
 
-    // Initialize the animated camera and attach it to the scene
-    let camera = await createAnimatedCamera(scene, canvas)
-
-    addPostEffectPipeline(scene, camera)
-
-    // Initialize the animation controller for handling camera animations
-    animationController = new AnimationController(camera)
+    
 
     // Setup lighting in the scene
     createLighting(scene)
@@ -63,13 +56,19 @@ export async function createScene(canvas, filePath) {
         console.error('Failed to load file:', error)
       }
       finally {
-        meshLoaderEvents.addEventListener('octreeLoaded', (event) => {
-          setLoading(false) // Hide loading UI once the file is processed
-          console.log(event.detail)
-          
-        })
+        setLoading(false)
       }
     }
+
+    // Initialize the animated camera and attach it to the scene
+    let camera = await createAnimatedCamera(scene, canvas, octree)
+
+    addPostEffectPipeline(scene, camera)
+
+    // Initialize the animation controller for handling camera animations
+    animationController = new AnimationController(camera)
+
+    console.log('create scene', octree)
 
     trackPerformanceStats(scene, engine)
 
