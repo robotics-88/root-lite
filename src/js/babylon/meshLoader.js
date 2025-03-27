@@ -19,29 +19,21 @@ function clearPreviousMeshes() {
 export async function loadMeshFromURL(scene, url, canvas) {
   clearPreviousMeshes()
   let { SceneLoader } = await import('@babylonjs/core') //dynamic import for a large module
+  let result = await SceneLoader.ImportMeshAsync('', url, '', scene, null, '.ply')
 
-   let result = await SceneLoader.ImportMeshAsync('', url, '', scene, null, '.ply')
-   // .then((result) => {
-      // Access the loaded meshes
-      result.meshes.forEach((mesh) => {
-        // Apply scaling factor to each mesh
-        mesh.isPickable = false // the raytracing for the splat image is very inaccurate and creates distracting issues
-        // Extract positions from _splatPositions array
-        let positions = mesh._splatPositions // Array of 3D positions for each point in the point cloud
-        let points = []
-        for(let i = 0; i< positions.length; i+=4){
-          if(positions[i] !== 0 && positions[i+1] !== 0 && positions[i+2] !== 0) // 0,0,0 points cause infinte loop.  Not 100% sure why
-            points.push(new Vector3(positions[i], positions[i+1], positions[i+2]))
-        }
-        octree = new Octree(points)
-     // })
-      loadedMeshes = result.meshes // Store so they can be cleared later
-
-    })
-    // .catch((error) => {
-    //   console.error('Error loading mesh:', error)
-    // })
-    console.log(octree)
+  result.meshes.forEach((mesh) => {
+    // Apply scaling factor to each mesh
+    mesh.isPickable = false // the raytracing for the splat image is very inaccurate and creates distracting issues
+    // Extract positions from _splatPositions array
+    let positions = mesh._splatPositions // Array of 3D positions for each point in the point cloud
+    let points = []
+    for(let i = 0; i< positions.length; i+=4){
+      if(positions[i] !== 0 && positions[i+1] !== 0 && positions[i+2] !== 0) // 0,0,0 points cause infinte loop.  Not 100% sure why
+        points.push(new Vector3(positions[i], positions[i+1], positions[i+2]))
+    }
+    octree = new Octree(points)
+  })
+  loadedMeshes = result.meshes // Store so they can be cleared later
   return octree 
 }
 
