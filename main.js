@@ -20,7 +20,6 @@ setLoading(true)
 // use an IIFE to avoid top level await which can still cause issues in some browsers
 ;(async () => {
   let { scene, animationController } = await createScene(canvas, FILE_PATH)
-  console.log('scene created')
   
   // Handle file input
   document
@@ -36,7 +35,7 @@ setLoading(true)
       setLoading(false)
     })
   //disable default behavior for long press
-  document.addEventListener("contextmenu", (event) => event.preventDefault())
+  document.addEventListener('contextmenu', (event) => event.preventDefault())
   // Handle drag and drop
   setupDragAndDrop(canvas, scene, animationController, updateScene)
 

@@ -51,7 +51,7 @@ export function addCameraControls(camera, canvas, octree) {
         cameraControlsState.isPanning = false
         cameraControlsState.isRotating = false
       }
-    }},
+    } },
   ]
 
   eventListeners.forEach(({ event, handler }) => canvas.addEventListener(event, handler))

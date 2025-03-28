@@ -31,15 +31,13 @@ export function handlePointerDown(event, camera, state) {
     } 
   }
   else {
-    state.activeTouches.set(event.pointerId, { x: event.clientX, y: event.clientY });
-    console.log('pointer down: ', state.activeTouches);
-    
+    state.activeTouches.set(event.pointerId, { x: event.clientX, y: event.clientY })    
     // If this is the second touch, store the initial distance for zooming
     if (state.activeTouches.size === 2) {
-      let touchArray = [...state.activeTouches.values()];
+      let touchArray = [...state.activeTouches.values()]
       state.prevDistance = Math.hypot(
         touchArray[0].x - touchArray[1].x,
-        touchArray[0].y - touchArray[1].y
+        touchArray[0].y - touchArray[1].y,
       )
     }
   }
