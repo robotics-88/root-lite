@@ -47,7 +47,7 @@ export async function createScene(canvas, filePath) {
     // Initialize the animation controller for handling camera animations
     animationController = new AnimationController(camera)
 
-    trackPerformanceStats(scene, engine)
+    //trackPerformanceStats(scene, engine)
 
     // Start the render loop for continuous scene updates
     engine.runRenderLoop(() => scene.render())

@@ -2,7 +2,7 @@ import { UniversalCamera } from '@babylonjs/core/Cameras/universalCamera'
 import { Vector3 } from '@babylonjs/core/Maths/math.vector'
 
 import { addAnimations } from '../animation/animation'
-import { processCameraData } from '../../colmap/parseFiles'
+import { processCameraData } from '../../dataProcessing/colmap/parseFiles'
 import { addCameraControls } from './CameraControls/cameraControls'
 
 const IMAGES_FILE_PATH = import.meta.env.VITE_DEFAULT_IMAGES_FILE_PATH
