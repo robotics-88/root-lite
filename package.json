@@ -10,14 +10,12 @@
     "lint": "eslint . --fix"
   },
   "devDependencies": {
+    "@babylonjs/core": "^8.0.1",
+    "@babylonjs/loaders": "^8.0.1",
     "eslint": "^9.21.0",
     "eslint-plugin-prettier": "^5.2.3",
     "eslint-plugin-pug": "^1.2.5",
     "eslint-plugin-vue-pug": "^0.6.2",
     "vite": "^6.2.0"
-  },
-  "dependencies": {
-    "@babylonjs/core": "7.48.0",
-    "@babylonjs/loaders": "7.48.0"
   }
 }

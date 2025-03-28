@@ -1,4 +1,7 @@
-import * as babylon from '@babylonjs/core'
+import { Animation } from '@babylonjs/core/Animations/animation'
+import { CubicEase, EasingFunction } from '@babylonjs/core/Animations/easing'
+import { Vector3 } from '@babylonjs/core/Maths/math.vector'
+import { Quaternion } from '@babylonjs/core/Maths'
 
 /**
  * Adds animations to the given camera based on a list of positions.
@@ -26,21 +29,21 @@ export function addAnimations(positions, camera) {
  */
 function createAnimations(positions) {
   // Create position animation
-  let positionAnimation = new babylon.Animation(
+  let positionAnimation = new Animation(
     'cameraPositionAnimation',
     'position',
     30, // Frames per second (FPS)
-    babylon.Animation.ANIMATIONTYPE_VECTOR3,
-    babylon.Animation.ANIMATIONLOOPMODE_CYCLE,
+    Animation.ANIMATIONTYPE_VECTOR3,
+    Animation.ANIMATIONLOOPMODE_CYCLE,
   )
 
   // Create rotation animation
-  let rotationAnimation = new babylon.Animation(
+  let rotationAnimation = new Animation(
     'cameraRotationAnimation',
     'rotationQuaternion',
     30, // FPS
-    babylon.Animation.ANIMATIONTYPE_QUATERNION,
-    babylon.Animation.ANIMATIONLOOPMODE_CYCLE,
+    Animation.ANIMATIONTYPE_QUATERNION,
+    Animation.ANIMATIONLOOPMODE_CYCLE,
   )
 
   // Generate keyframes for position and rotation
@@ -62,8 +65,8 @@ function createAnimations(positions) {
  * Applies an easing function to an animation for smoother transitions.
  */
 function applyEasing(animation) {
-  let easingFunction = new babylon.CubicEase()
-  easingFunction.setEasingMode(babylon.EasingFunction.EASINGMODE_EASEINOUT)
+  let easingFunction = new CubicEase()
+  easingFunction.setEasingMode(EasingFunction.EASINGMODE_EASEINOUT)
   animation.setEasingFunction(easingFunction)
 }
 
@@ -78,13 +81,13 @@ function createKeys(positions, threshold = 0.2) {
   let rotationKeys = []
 
   function addKeyframes(startFrame, pos, rot, endFrame, nextPos, nextRot) {
-    let distance = babylon.Vector3.Distance(pos, nextPos)
+    let distance = Vector3.Distance(pos, nextPos)
 
     if (distance > threshold) {
       // Calculate midpoint values
       let midFrame = (startFrame + endFrame) / 2
-      let midPos = babylon.Vector3.Lerp(pos, nextPos, 0.1)
-      let midRot = babylon.Quaternion.Slerp(rot, nextRot, 0.1)
+      let midPos = Vector3.Lerp(pos, nextPos, 0.1)
+      let midRot = Quaternion.Slerp(rot, nextRot, 0.1)
 
       // Recursively add keyframes for the first half
       addKeyframes(startFrame, pos, rot, midFrame, midPos, midRot)

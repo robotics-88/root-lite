@@ -1,5 +1,15 @@
-export default {
+import { defineConfig } from 'vite'
+
+export default defineConfig({
   build: {
-    target: 'esnext' //browsers can handle the latest ES features
-  }
-}
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'babylon-engine': ['@babylonjs/core/Engines/engine'],
+          'babylon-meshes': ['@babylonjs/core/Meshes'],
+          'babylon-materials': ['@babylonjs/core/Materials'],
+        },
+      },
+    },
+  },
+})

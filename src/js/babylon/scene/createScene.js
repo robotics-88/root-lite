@@ -1,30 +1,26 @@
-import * as babylon from '@babylonjs/core'
+
 import { createAnimatedCamera } from '../camera/camera.js'
 import { addPostEffectPipeline } from '../postEffectPipeline.js'
 import { AnimationController } from '../animation/animationController.js'
 import { createLighting } from '../lighting.js'
 import { loadMeshFromURL } from '../meshLoader.js'
 import { setLoading } from '../../ui/loading.js'
-import { meshLoaderEvents } from '../meshLoader'
 import { trackPerformanceStats } from '../../ui/performanceStats.js'
 
 export async function createScene(canvas, filePath) {
+  let { Engine, Scene, PointerEventTypes } = await import('@babylonjs/core')
   let engine = null,
     scene = null,
     animationController = null
 
   try {
-    // Create the Babylon.js rendering engine
-    engine = new babylon.Engine(canvas, true)
-    scene = new babylon.Scene(engine)
-
-    // Initialize the animated camera and attach it to the scene
-    let camera = await createAnimatedCamera(scene, canvas)
-
-    addPostEffectPipeline(scene, camera)
-
-    // Initialize the animation controller for handling camera animations
-    animationController = new AnimationController(camera)
+    // Create the js rendering engine
+    engine = new Engine(canvas, true, {
+      preserveDrawingBuffer: true,
+      stencil: true,
+      antialias: false, 
+    })
+    scene = new Scene(engine)
 
     // Setup lighting in the scene
     createLighting(scene)
@@ -39,12 +35,17 @@ export async function createScene(canvas, filePath) {
         console.error('Failed to load file:', error)
       }
       finally {
-        meshLoaderEvents.addEventListener('octreeLoaded', (event) => {
-          setLoading(false) // Hide loading UI once the file is processed
-          
-        })
+        setLoading(false)
       }
     }
+
+    // Initialize the animated camera and attach it to the scene
+    let camera = await createAnimatedCamera(scene, canvas, octree)
+
+    addPostEffectPipeline(scene, camera)
+
+    // Initialize the animation controller for handling camera animations
+    animationController = new AnimationController(camera)
 
     trackPerformanceStats(scene, engine)
 
@@ -60,7 +61,7 @@ export async function createScene(canvas, filePath) {
     // Pause animation when the user interacts with the scene
     scene.onPointerObservable.add(() => {
       animationController.pause()
-    }, babylon.PointerEventTypes.POINTERDOWN)
+    }, PointerEventTypes.POINTERDOWN)
 
     // Resume animation when the user presses 'Space'
     window.addEventListener('keydown', (event) => {

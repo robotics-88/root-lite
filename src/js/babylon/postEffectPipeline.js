@@ -1,4 +1,4 @@
-import * as babylon from '@babylonjs/core'
+import { DefaultRenderingPipeline } from '@babylonjs/core/PostProcesses/RenderPipeline'
 
 let pipeline = null
 
@@ -9,7 +9,7 @@ export function addPostEffectPipeline(scene, camera) {
     pipeline = null
   }
 
-  pipeline = new babylon.DefaultRenderingPipeline(
+  pipeline = new DefaultRenderingPipeline(
     'defaultPipeline',
     false,
     scene,

@@ -1,4 +1,4 @@
-import * as babylon from '@babylonjs/core'
+import { Axis } from '@babylonjs/core/Maths/math.axis'
 
 /**
    * Handles touch move events for both single-touch (panning) and
@@ -17,10 +17,10 @@ export function handleTouchMove(event, camera, state) {
   //single touch - panning
     let panFactor = 0.001
     camera.position.addInPlace(
-      camera.getDirection(babylon.Axis.X).scale(-deltaX * panFactor),
+      camera.getDirection(Axis.X).scale(-deltaX * panFactor),
     )
     camera.position.addInPlace(
-      camera.getDirection(babylon.Axis.Y).scale(deltaY * panFactor),
+      camera.getDirection(Axis.Y).scale(deltaY * panFactor),
     )
   }
   else if (touchCount === 2) {
@@ -34,7 +34,7 @@ export function handleTouchMove(event, camera, state) {
     if (state.prevDistance !== null) {
       let zoomFactor = 0.005
       let zoomDelta = (newDistance - state.prevDistance) * zoomFactor
-      let direction = camera.getDirection(babylon.Axis.Z)
+      let direction = camera.getDirection(Axis.Z)
       camera.position.addInPlace(direction.scale(zoomDelta))
     }
 
