@@ -1,22 +1,10 @@
 import { Vector3 } from '@babylonjs/core/Maths/math.vector'
 
-/**
- * A lot of work left to do here.  This is a dumb version of this.  It is doing a little good
- * but not much.  Need to optimize and take full advantage of the data structure
- * 
- * 1. this does not subdivide the top layer of nodes.  It creates 8 boxes and divides the points up into them.  
- * 2. searching and finding a collision is around 100-300ms, building is arouns 300ms
- * 3. this is for a splat with around 3,000,000 points
- * 
- * Need to make this subdivide the nodes so that is can further optimize the search
- */
-
 export class Octree {
   constructor(pointCloud) {
-    this.maxPointsPerOctant = 100 // This can be adjusted later for more efficient subdivision
+    this.maxPointsPerOctant = 100
     this.boundingBox = this.computeBoundingBox(pointCloud)
     this.root = this.build(pointCloud)
-    this.center = null
     this.center = this.boundingBox.center()
   }
 
@@ -47,19 +35,12 @@ export class Octree {
   }
 
   findIntersection(ray, minDistance = 0.005) {
-    const start = performance.now() // Start time
-    const result = this._findIntersection(this.root, ray, minDistance)
-    const end = performance.now() // End time
-  
-    console.log(`findIntersection execution time: ${(end - start).toFixed(3)} ms`)
-    return result
+    return this._findIntersection(this.root, ray, minDistance)
   }
 
   _findIntersection(node, ray, minDistance) {
     
-    if (!node.boundingBox.intersectsRay(ray)) {
-      return null
-    }
+    if (!node.boundingBox.intersectsRay(ray)) return null
   
     let closestPoint = null
     let closestDistance = Infinity
@@ -132,31 +113,43 @@ class BoundingBox {
   }
 
   intersectsRay(ray) {
-    // AABB ray intersection test (simplified)
+    // AABB (Axis-Aligned Bounding Box) ray intersection test
+
+    // Calculate intersection points with the X-axis aligned planes
     let tMin = (this.min.x - ray.origin.x) / ray.direction.x
     let tMax = (this.max.x - ray.origin.x) / ray.direction.x
 
+    // Ensure tMin is always the smaller value
     if (tMin > tMax) [tMin, tMax] = [tMax, tMin]
 
+    // Calculate intersection points with the Y-axis aligned planes
     let tYMin = (this.min.y - ray.origin.y) / ray.direction.y
     let tYMax = (this.max.y - ray.origin.y) / ray.direction.y
 
+    // Ensure tYMin is always the smaller value
     if (tYMin > tYMax) [tYMin, tYMax] = [tYMax, tYMin]
 
+    // If the X and Y intervals do not overlap, there's no intersection
     if ((tMin > tYMax) || (tYMin > tMax)) return false
 
+    // Update tMin and tMax to consider Y-axis intersections
     if (tYMin > tMin) tMin = tYMin
     if (tYMax < tMax) tMax = tYMax
 
+    // Calculate intersection points with the Z-axis aligned planes
     let tZMin = (this.min.z - ray.origin.z) / ray.direction.z
     let tZMax = (this.max.z - ray.origin.z) / ray.direction.z
 
+    // Ensure tZMin is always the smaller value
     if (tZMin > tZMax) [tZMin, tZMax] = [tZMax, tZMin]
 
+    // If the X, Y, and Z intervals do not overlap, there's no intersection
     if ((tMin > tZMax) || (tZMin > tMax)) return false
 
+    // If we reach this point, the ray intersects the AABB
     return true
   }
+
 }
 
 export class OctreeNode {
@@ -186,49 +179,54 @@ export class OctreeNode {
   
   // Modify the subdivision to handle (0, 0, 0) points
   subdivide(pointCloud, maxPointsPerOctant) {
-    if (!this.isLeaf()) return // Already subdivided
-  
-    let halfSize = this.boundingBox.size().scale(0.5)
-    let center = this.boundingBox.center()
-  
+    // If this node is already subdivided, exit early
+    if (!this.isLeaf()) return;
+
+    // Calculate half the size of the bounding box
+    let halfSize = this.boundingBox.size().scale(0.5);
+    let center = this.boundingBox.center(); // Get the center of the bounding box
+
+    // Compute quarter size to determine offsets for child octants
     let quarterSize = new Vector3(
-      halfSize.x / 2,
-      halfSize.y / 2,
-      halfSize.z / 2,
-    )
-  
+        halfSize.x / 2,
+        halfSize.y / 2,
+        halfSize.z / 2,
+    );
+
+    // Define offsets for the 8 child octants relative to the center
     let offsets = [
-      new Vector3(quarterSize.x, quarterSize.y, quarterSize.z),  // Front-Right-Top
-      new Vector3(-quarterSize.x, quarterSize.y, quarterSize.z), // Front-Left-Top
-      new Vector3(quarterSize.x, -quarterSize.y, quarterSize.z), // Front-Right-Bottom
-      new Vector3(-quarterSize.x, -quarterSize.y, quarterSize.z),// Front-Left-Bottom
-      new Vector3(quarterSize.x, quarterSize.y, -quarterSize.z), // Back-Right-Top
-      new Vector3(-quarterSize.x, quarterSize.y, -quarterSize.z),// Back-Left-Top
-      new Vector3(quarterSize.x, -quarterSize.y, -quarterSize.z),// Back-Right-Bottom
-      new Vector3(-quarterSize.x, -quarterSize.y, -quarterSize.z), // Back-Left-Bottom
-    ]
-  
-    let childNodes = offsets.map(offset => {
-      let childCenter = center.add(offset)
-      let childMin = childCenter.subtract(quarterSize)
-      let childMax = childCenter.add(quarterSize)
-  
-      return new OctreeNode(new BoundingBox(childMin, childMax))
-    })
-    
-    while(pointCloud.length > 0){
-      let point = pointCloud.pop()
-      childNodes.forEach((node) => {
-        if(node.tryAddPoint(point)) return
-      })
+        new Vector3(quarterSize.x, quarterSize.y, quarterSize.z),   // Front-Right-Top
+        new Vector3(-quarterSize.x, quarterSize.y, quarterSize.z),  // Front-Left-Top
+        new Vector3(quarterSize.x, -quarterSize.y, quarterSize.z),  // Front-Right-Bottom
+        new Vector3(-quarterSize.x, -quarterSize.y, quarterSize.z), // Front-Left-Bottom
+        new Vector3(quarterSize.x, quarterSize.y, -quarterSize.z),  // Back-Right-Top
+        new Vector3(-quarterSize.x, quarterSize.y, -quarterSize.z), // Back-Left-Top
+        new Vector3(quarterSize.x, -quarterSize.y, -quarterSize.z), // Back-Right-Bottom
+        new Vector3(-quarterSize.x, -quarterSize.y, -quarterSize.z) // Back-Left-Bottom
+    ];
+
+    // Create 8 child nodes by positioning them around the center using offsets
+    this.children = offsets.map(offset => {
+        let childCenter = center.add(offset);
+        let childMin = childCenter.subtract(quarterSize);
+        let childMax = childCenter.add(quarterSize);
+
+        return new OctreeNode(new BoundingBox(childMin, childMax));
+    });
+
+    // Distribute all points in the current node to the new child nodes
+    while (pointCloud.length > 0) {
+        let point = pointCloud.pop()
+        this.children.forEach((node) => {
+            if (node.tryAddPoint(point)) return // Try adding the point to the appropriate child
+        })
     }
-  
-    childNodes.forEach(node => {
-      if (node.points.length > maxPointsPerOctant) {
-        node.subdivide(node.points, maxPointsPerOctant)
-      }
+
+    // Recursively subdivide children if they exceed the max allowed points
+    this.children.forEach(node => {
+        if (node.points.length > maxPointsPerOctant) 
+          node.subdivide(node.points, maxPointsPerOctant)
     })
-  
-    this.children = childNodes // Update the current node with subdivided children
-  }
+}
+
 }

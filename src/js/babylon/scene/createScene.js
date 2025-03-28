@@ -7,25 +7,6 @@ import { loadMeshFromURL } from '../meshLoader.js'
 import { setLoading } from '../../ui/loading.js'
 import { trackPerformanceStats } from '../../ui/performanceStats.js'
 
-let config = {
-  camera: {
-    alpha: -Math.PI / 4,
-    beta:  Math.PI / 3,
-    radius: 4,
-    upperRadiusLimit: 7.0,
-    lowerRadiusLimit: 2.0, // Increased from 1.1 to 2.0 to prevent camera from getting too close
-    minZ: 0.1,
-    maxZ: 1000,
-  },
-  engine: {
-    // (Suggestion #10) Fine-tune engine creation
-    preserveDrawingBuffer: true,
-    stencil: true,
-    disableWebGL2Support: false,
-    antialias: false, // Disable built-in anti-aliasing to use FXAA
-  },
-}
-
 export async function createScene(canvas, filePath) {
   let { Engine, Scene, PointerEventTypes } = await import('@babylonjs/core')
   let engine = null,
@@ -40,8 +21,6 @@ export async function createScene(canvas, filePath) {
       antialias: false, 
     })
     scene = new Scene(engine)
-
-    
 
     // Setup lighting in the scene
     createLighting(scene)
@@ -67,8 +46,6 @@ export async function createScene(canvas, filePath) {
 
     // Initialize the animation controller for handling camera animations
     animationController = new AnimationController(camera)
-
-    console.log('create scene', octree)
 
     trackPerformanceStats(scene, engine)
 

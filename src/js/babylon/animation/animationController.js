@@ -1,6 +1,7 @@
 import { Vector3 } from '@babylonjs/core/Maths/math.vector'
 import { processCameraData } from '../../colmap/parseFiles'
 import { addAnimations } from './animation'
+import { addCameraControls } from '../camera/CameraControls/cameraControls'
 
 /**
  * Animation Controller to handle playback controls (start, pause, resume, speed adjustment).
@@ -91,6 +92,10 @@ export class AnimationController {
 
     // Restart animation
     this.play()
+  }
+
+  resetCameraControls(octree, canvas){
+    addCameraControls(this.animationTarget, canvas, octree)
   }
 
   /**

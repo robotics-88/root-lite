@@ -18,6 +18,10 @@ export function setupDragAndDrop(
     dragCounter = 0
 
     let file = event.dataTransfer.files[0] // Get the first dropped file
+    if(!file) {
+      dropOverlay.classList.toggle('visible')
+      return
+    }
     setLoading(true)
     showToast('Loading file...', 'info')
     if (file && file.name.endsWith('.tar.gz')) {
@@ -48,14 +52,14 @@ export function setupDragAndDrop(
   }
 
   // Detect when a file is dragged into the document
-  document.addEventListener('dragenter', (event) => {
+  canvas.addEventListener('dragenter', (event) => {
     preventDefaults(event)
     dragCounter++ // Increase drag counter
     dropOverlay.classList.toggle('visible') // Show overlay
   })
 
   // Detect when the dragged file leaves the document
-  document.addEventListener('dragleave', (event) => {
+  canvas.addEventListener('dragleave', (event) => {
     preventDefaults(event)
     dragCounter-- // Decrease drag counter
     if (dragCounter === 0) {
@@ -63,6 +67,6 @@ export function setupDragAndDrop(
     }
   })
 
-  document.addEventListener('dragover', preventDefaults) // Prevent default dragover behavior
-  document.addEventListener('drop', handleFileDrop) // Handle file drop event
+  canvas.addEventListener('dragover', preventDefaults) // Prevent default dragover behavior
+  canvas.addEventListener('drop', handleFileDrop) // Handle file drop event
 }

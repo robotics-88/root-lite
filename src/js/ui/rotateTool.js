@@ -22,8 +22,9 @@ export function initializeRotateTool(animationController) {
   // Event listener for when the user clicks (mousedown) on the rotatable element
   rotatable.addEventListener('mousedown', (event) => {
     startAngle = getAngle(event) - baseCameraRotation 
-    document.addEventListener('mousemove', rotateElement) 
-    document.addEventListener('mouseup', stopDragging) 
+    rotatable.addEventListener('mousemove', rotateElement) 
+    rotatable.addEventListener('mouseup', stopDragging) 
+    rotatable.addEventListener('mouseleave', stopDragging) 
   })
 
   // Rotates the element based on mouse movement
@@ -49,8 +50,9 @@ export function initializeRotateTool(animationController) {
 
   // Stops the dragging interaction and removes event listeners
   function stopDragging() {
-    document.removeEventListener('mousemove', rotateElement)
-    document.removeEventListener('mouseup', stopDragging)
+    rotatable.removeEventListener('mousemove', rotateElement)
+    rotatable.removeEventListener('mouseup', stopDragging)
+    rotatable.removeEventListener('mouseleave', stopDragging)
   }
 
   // Updates the center position of the rotatable element

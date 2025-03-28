@@ -10,8 +10,11 @@ export async function updateScene(scene, file, animationController) {
     
     // Check if file is a DataView and call the appropriate function
     let octree = file instanceof DataView ? await loadMeshFromDataView(scene, file.buffer) : await loadMeshFromFile(scene, file)
-    console.log(octree)
+
+    let canvas = scene.getEngine().getRenderingCanvas()
+    
     //TODO : ADD IN RESET OF CAMERA CONTROLS!!!
+    animationController.resetCameraControls(octree, canvas)
 
     //LEFT IN PLACE FOR DEV
     //animationController.reset()

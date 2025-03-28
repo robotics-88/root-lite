@@ -114,9 +114,7 @@ async function parseCameraPositions(imagesSource, camerasSource) {
 async function getTextContent(source) {
   if (source instanceof DataView) return dataViewToString(source)
   else if (typeof source === 'string') return fetchTextFile(source)
-  else {
-    throw new Error('Invalid source type: expected DataView or URL string')
-  }
+  else throw new Error('Invalid source type: expected DataView or URL string')
 }
 
 // Function to convert DataView to a string

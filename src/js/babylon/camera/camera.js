@@ -41,7 +41,6 @@ export async function createAnimatedCamera(scene, canvas, octree) {
 
   // Remove default mouse input (will be replaced with custom controls)
   camera.inputs.removeByType('FreeCameraMouseInput')
-  console.log(octree)
   // Add custom camera controls
   addCameraControls(camera, canvas, octree)
 
