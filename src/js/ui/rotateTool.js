@@ -1,5 +1,5 @@
 // Stores the base rotation of the camera to maintain consistency across interactions
-let baseCameraRotation = 0
+let baseCameraRotation = 1.829327364167595 //set to default for house.ply
 
 export function initializeRotateTool(animationController) {
   // Retrieve the target object (camera) from the animation controller
