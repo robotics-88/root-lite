@@ -1,4 +1,7 @@
 import { Axis } from '@babylonjs/core/Maths/math.axis'
+import { rotateCamera } from './helpers'
+import { getBaseCameraRotation } from '../../../../ui/rotateTool'
+
 
 /**
    * Handles touch move events for both single-touch (panning) and
@@ -14,8 +17,8 @@ export function handleTouchMove(event, camera, state) {
   state.activeTouches.set(event.pointerId, { x: event.clientX, y: event.clientY })
 
   if (touchCount === 1) {
-    //single touch - rotate
-    console.log('rotate!!')
+    
+    rotateCamera(camera, state, deltaX, deltaY)
   }
   else if (touchCount === 2) {
     //two finger touch - zooming
@@ -33,13 +36,13 @@ export function handleTouchMove(event, camera, state) {
       camera.position.addInPlace(direction.scale(zoomDelta))
     }
     else {
-     
       // Two-finger move for panning
       let panFactor = 0.01
       camera.position.addInPlace(camera.getDirection(Axis.X).scale(-deltaX * panFactor))
       camera.position.addInPlace(camera.getDirection(Axis.Y).scale(deltaY * panFactor))
     }
-
     state.prevDistance = newDistance
   }
+    camera.rotation.z = getBaseCameraRotation()
+  
 }

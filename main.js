@@ -6,11 +6,7 @@ import { setupInstructions } from './src/js/ui/instructions.js'
 import { processTarballFiles } from './src/js/tarball/processTarball.js'
 import { initializeRotateTool } from './src/js/ui/rotateTool.js'
 
-import checkEnvironmentVariables from './src/js/check-environment-variables.js'
-
-checkEnvironmentVariables()
-
-const FILE_PATH = import.meta.env.VITE_DEFAULT_SPLAT_FILE_PATH
+const FILE_PATH = '/splat.ply'
 
 let canvas = document.getElementById('render-canvas')
 
@@ -35,7 +31,7 @@ setLoading(true)
       setLoading(false)
     })
   //disable default behavior for long press
-  document.addEventListener('contextmenu', (event) => event.preventDefault())
+  canvas.addEventListener('contextmenu', (event) => event.preventDefault())
   // Handle drag and drop
   setupDragAndDrop(canvas, scene, animationController, updateScene)
 

@@ -7,9 +7,9 @@ import { Vector3 } from '@babylonjs/core/Maths/math.vector'
 
 export function handlePointerDown(event, camera, state) {
   event.preventDefault()
-
+  let pickResult = camera.getScene().pick(event.clientX, event.clientY)
   if (event.pointerType !== 'touch') {
-    let pickResult = camera.getScene().pick(event.clientX, event.clientY)
+    
     if (event.button === 0) state.isPanning = true // Left click for panning
     else if (event.button === 2) {
       state.isRotating = true
@@ -39,6 +39,15 @@ export function handlePointerDown(event, camera, state) {
         touchArray[0].x - touchArray[1].x,
         touchArray[0].y - touchArray[1].y,
       )
+    }
+    else if(state.activeTouches.size === 1) {
+      console.log('find intersection')
+      //single touch - rotate
+      let intersection = state.octree.findIntersection(pickResult.ray)
+      state.rotationCenter = intersection ? intersection.clone() : camera.target.clone()
+      
+      // Smoothly transition the target to rotationCenter
+      camera.setTarget(Vector3.Lerp(camera.target, state.rotationCenter, .01))
     }
   }
 
