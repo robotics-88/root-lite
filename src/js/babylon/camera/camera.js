@@ -5,8 +5,8 @@ import { addAnimations } from '../animation/animation'
 import { processCameraData } from '../../colmap/parseFiles'
 import { addCameraControls } from './CameraControls/cameraControls'
 
-const IMAGES_FILE_PATH = import.meta.env.VITE_DEFAULT_IMAGES_FILE_PATH
-const CAMERAS_FILE_PATH = import.meta.env.VITE_DEFAULT_CAMERAS_FILE_PATH
+const IMAGES_FILE_PATH = '/images.txt'
+const CAMERAS_FILE_PATH = '/cameras.txt'
 
 /**
  * Creates an animated camera in the scene based on parsed COLMAP camera positions.

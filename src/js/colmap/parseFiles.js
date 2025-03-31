@@ -2,11 +2,18 @@ import { Quaternion, Vector3 } from '@babylonjs/core/Maths/math.vector'
 
 // Function to fetch and parse a text file
 async function fetchTextFile(url) {
-  let response = await fetch(url)
-  if (!response.ok) {
-    throw new Error(`Failed to fetch from ${url}: ${response.statusText}`)
+  try {
+    let response = await fetch(url)
+    // if (!response.ok) {
+    //   console.warn(`Warning: Failed to fetch from ${url}: ${response.statusText}`)
+    //   return null // Gracefully return null instead of throwing an error
+    // }
+    return await response.text()
   }
-  return response.text()
+  catch (error) {
+    console.warn(`Warning: Could not fetch from ${url}: ${error.message}`)
+    return null // Gracefully handle any other errors
+  }
 }
 
 // Function to parse images.txt
@@ -97,15 +104,20 @@ async function parseCameraPoses(posesURL, scale = 2) {
 async function parseCameraPositions(imagesSource, camerasSource) {
   try {
     let imagesText = await getTextContent(imagesSource)
-    let imagesArray = parseImagesTxt(imagesText)
-
+  
+    if (!imagesText) {
+      console.warn('No image text found, returning empty array.')
+      return []
+    }
+  
+    let imagesArray = parseImagesTxt(imagesText) || []
+  
     return imagesArray.map((image) => ({
-      location: image.translation,
-      rotation: image.rotation,
+      location: image?.translation || null,
+      rotation: image?.rotation || null,
     }))
   }
   catch (error) {
-    console.error('Error parsing camera positions:', error)
     return []
   }
 }
