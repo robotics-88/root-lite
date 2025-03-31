@@ -21,12 +21,14 @@ export function trackPerformanceStats(scene, engine) {
       let fps = engine.getFps()
       let width = engine.getRenderWidth()
       let height = engine.getRenderHeight()
-      let totalVertices = getTotalVertices(scene)      
+      let totalVertices = getTotalVertices(scene)    
+      let memory =  performance.memory
+      
       
       fpsCounter.textContent = fps.toFixed(2)
       resolutionCounter.textContent = `${width} x ${height}`
       verticesCounter.textContent = totalVertices
-      memoryCounter.textContent = (performance.memory.totalJSHeapSize / 1048576).toFixed(2) + 'MB'
+      memoryCounter.textContent = memory ? (performance.memory.totalJSHeapSize / 1048576).toFixed(2) + 'MB' : `n/a`
       frameTimeCounter.textContent = (1000 / fps).toFixed(2) + 'ms'
       activeMeshesCounter.textContent = scene.meshes.filter(mesh => mesh.isEnabled()).length
     }

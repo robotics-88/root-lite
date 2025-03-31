@@ -34,7 +34,6 @@ export async function createAnimatedCamera(scene, canvas, octree) {
   camera.rotation.y = -2.764540615291023
   camera.rotation.z = 1.829327364167595
 
-
   // Attach control to canvas
   camera.attachControl(canvas, true)
 

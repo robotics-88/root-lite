@@ -3,3 +3,10 @@
   position: absolute;
   z-index: 100;
 }
+
+
+@media (max-width: 767px) {
+  .mouse-controls{
+    display: none;
+  }
+}
