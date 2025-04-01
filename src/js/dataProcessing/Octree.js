@@ -180,53 +180,53 @@ export class OctreeNode {
   // Modify the subdivision to handle (0, 0, 0) points
   subdivide(pointCloud, maxPointsPerOctant) {
     // If this node is already subdivided, exit early
-    if (!this.isLeaf()) return;
+    if (!this.isLeaf()) return
 
     // Calculate half the size of the bounding box
-    let halfSize = this.boundingBox.size().scale(0.5);
-    let center = this.boundingBox.center(); // Get the center of the bounding box
+    let halfSize = this.boundingBox.size().scale(0.5)
+    let center = this.boundingBox.center() // Get the center of the bounding box
 
     // Compute quarter size to determine offsets for child octants
     let quarterSize = new Vector3(
-        halfSize.x / 2,
-        halfSize.y / 2,
-        halfSize.z / 2,
-    );
+      halfSize.x / 2,
+      halfSize.y / 2,
+      halfSize.z / 2,
+    )
 
     // Define offsets for the 8 child octants relative to the center
     let offsets = [
-        new Vector3(quarterSize.x, quarterSize.y, quarterSize.z),   // Front-Right-Top
-        new Vector3(-quarterSize.x, quarterSize.y, quarterSize.z),  // Front-Left-Top
-        new Vector3(quarterSize.x, -quarterSize.y, quarterSize.z),  // Front-Right-Bottom
-        new Vector3(-quarterSize.x, -quarterSize.y, quarterSize.z), // Front-Left-Bottom
-        new Vector3(quarterSize.x, quarterSize.y, -quarterSize.z),  // Back-Right-Top
-        new Vector3(-quarterSize.x, quarterSize.y, -quarterSize.z), // Back-Left-Top
-        new Vector3(quarterSize.x, -quarterSize.y, -quarterSize.z), // Back-Right-Bottom
-        new Vector3(-quarterSize.x, -quarterSize.y, -quarterSize.z) // Back-Left-Bottom
-    ];
+      new Vector3(quarterSize.x, quarterSize.y, quarterSize.z),   // Front-Right-Top
+      new Vector3(-quarterSize.x, quarterSize.y, quarterSize.z),  // Front-Left-Top
+      new Vector3(quarterSize.x, -quarterSize.y, quarterSize.z),  // Front-Right-Bottom
+      new Vector3(-quarterSize.x, -quarterSize.y, quarterSize.z), // Front-Left-Bottom
+      new Vector3(quarterSize.x, quarterSize.y, -quarterSize.z),  // Back-Right-Top
+      new Vector3(-quarterSize.x, quarterSize.y, -quarterSize.z), // Back-Left-Top
+      new Vector3(quarterSize.x, -quarterSize.y, -quarterSize.z), // Back-Right-Bottom
+      new Vector3(-quarterSize.x, -quarterSize.y, -quarterSize.z), // Back-Left-Bottom
+    ]
 
     // Create 8 child nodes by positioning them around the center using offsets
     this.children = offsets.map(offset => {
-        let childCenter = center.add(offset);
-        let childMin = childCenter.subtract(quarterSize);
-        let childMax = childCenter.add(quarterSize);
+      let childCenter = center.add(offset)
+      let childMin = childCenter.subtract(quarterSize)
+      let childMax = childCenter.add(quarterSize)
 
-        return new OctreeNode(new BoundingBox(childMin, childMax));
-    });
+      return new OctreeNode(new BoundingBox(childMin, childMax))
+    })
 
     // Distribute all points in the current node to the new child nodes
     while (pointCloud.length > 0) {
-        let point = pointCloud.pop()
-        this.children.forEach((node) => {
-            if (node.tryAddPoint(point)) return // Try adding the point to the appropriate child
-        })
+      let point = pointCloud.pop()
+      this.children.forEach((node) => {
+        if (node.tryAddPoint(point)) return // Try adding the point to the appropriate child
+      })
     }
 
     // Recursively subdivide children if they exceed the max allowed points
     this.children.forEach(node => {
-        if (node.points.length > maxPointsPerOctant) 
-          node.subdivide(node.points, maxPointsPerOctant)
+      if (node.points.length > maxPointsPerOctant) 
+        node.subdivide(node.points, maxPointsPerOctant)
     })
-}
+  }
 
 }

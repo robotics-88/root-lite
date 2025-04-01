@@ -1,5 +1,5 @@
 // Stores the base rotation of the camera to maintain consistency across interactions
-let baseCameraRotation = 0
+let baseCameraRotation = 1.829327364167595 //set to default for house.ply
 
 export function initializeRotateTool(animationController) {
   // Retrieve the target object (camera) from the animation controller
@@ -19,12 +19,23 @@ export function initializeRotateTool(animationController) {
 
   updateCenter() // Get initial center position on load
 
-  // Event listener for when the user clicks (mousedown) on the rotatable element
+  // MOUSE EVENTS
   rotatable.addEventListener('mousedown', (event) => {
     startAngle = getAngle(event) - baseCameraRotation 
-    rotatable.addEventListener('mousemove', rotateElement) 
-    rotatable.addEventListener('mouseup', stopDragging) 
-    rotatable.addEventListener('mouseleave', stopDragging) 
+    document.addEventListener('mousemove', rotateElement)
+    document.addEventListener('mouseup', stopDragging)
+    document.addEventListener('mouseleave', stopDragging) // Added back!
+  })
+
+  // TOUCH EVENTS
+  rotatable.addEventListener('touchstart', (event) => {
+    event.preventDefault() // Prevent scrolling
+    if (event.touches.length === 1) { // Single touch only
+      startAngle = getAngle(event.touches[0]) - baseCameraRotation 
+      document.addEventListener('touchmove', handleTouchMove)
+      document.addEventListener('touchend', stopDragging)
+      document.addEventListener('touchcancel', stopDragging) // Handles interruptions
+    }
   })
 
   // Rotates the element based on mouse movement
@@ -33,6 +44,14 @@ export function initializeRotateTool(animationController) {
     baseCameraRotation = angle - startAngle
     rotatable.style.transform = `rotate(${baseCameraRotation}rad)`
     rotateCamera(baseCameraRotation)
+  }
+
+  // Handles touchmove, normalizing to use the first touch
+  function handleTouchMove(event) {
+    event.preventDefault() // Prevent default gestures
+    if (event.touches.length === 1) {
+      rotateElement(event.touches[0])
+    }
   }
 
   // Updates the camera's rotation based on the calculated angle
@@ -48,11 +67,14 @@ export function initializeRotateTool(animationController) {
     return Math.atan2(dy, dx) // Returns the angle in radians
   }
 
-  // Stops the dragging interaction and removes event listeners
+  // Stops dragging interaction
   function stopDragging() {
-    rotatable.removeEventListener('mousemove', rotateElement)
-    rotatable.removeEventListener('mouseup', stopDragging)
-    rotatable.removeEventListener('mouseleave', stopDragging)
+    document.removeEventListener('mousemove', rotateElement)
+    document.removeEventListener('mouseup', stopDragging)
+    document.removeEventListener('mouseleave', stopDragging) // Ensure mouseleave stops rotation
+    document.removeEventListener('touchmove', handleTouchMove)
+    document.removeEventListener('touchend', stopDragging)
+    document.removeEventListener('touchcancel', stopDragging) // Handles cases like browser gestures
   }
 
   // Updates the center position of the rotatable element

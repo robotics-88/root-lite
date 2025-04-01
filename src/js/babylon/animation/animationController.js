@@ -1,5 +1,5 @@
 import { Vector3 } from '@babylonjs/core/Maths/math.vector'
-import { processCameraData } from '../../colmap/parseFiles'
+import { processCameraData } from '../../dataProcessing/colmap/parseFiles'
 import { addAnimations } from './animation'
 import { addCameraControls } from '../camera/CameraControls/cameraControls'
 

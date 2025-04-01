@@ -1,8 +1,8 @@
-import { Vector3 } from '@babylonjs/core/Maths/math.vector'
-import { Quaternion } from '@babylonjs/core/Maths'
+
 import { Axis } from '@babylonjs/core/Maths/math.axis'
 import { handleTouchMove } from './touchMove'
 import { getBaseCameraRotation } from '../../../../ui/rotateTool'
+import { rotateCamera } from './helpers'
 
 export function handlePointerMove(event, camera, state) {
   
@@ -28,42 +28,42 @@ export function handlePointerMove(event, camera, state) {
     )
   }
   else if (state.isRotating) {
-    let rotateFactor = 0.001
-      
-    // --------- ORBIT ROTATION (Around a close target) -
-    let direction = camera.position.subtract(state.rotationCenter)
-    let radius = direction.length() // Maintain distance
-
-    // Convert camera's rotation quaternion to local basis vectors
-    let right = camera.getDirection(Axis.X)
-    let up = camera.getDirection(Axis.Y)
-
-    // Reverse x and y rotations for grab-and-drag feel
-    let yaw = deltaX * rotateFactor // Negative for natural drag
-    let pitch = deltaY * rotateFactor // Negative for natural drag
-
-    // Create rotation quaternions relative to the camera’s local axes
-    let yawQuat = Quaternion.RotationAxis(up, yaw)
-    let pitchQuat = Quaternion.RotationAxis(right, pitch)
-
-    // Apply rotations
-    let finalRotation = yawQuat.multiply(pitchQuat)
-    direction = direction.applyRotationQuaternion(finalRotation)
-
-    // Keep camera at a fixed distance
-    direction.normalize().scaleInPlace(radius)
-    let newPosition = state.rotationCenter.add(direction)
-
-    // Gradually move target until it's close enough
-    let newTarget = Vector3.Lerp(camera.target, state.rotationCenter, 0.1)
-
-    // Lock target when close enough
-    if (Vector3.Distance(newTarget, state.rotationCenter) < 0.01) newTarget = state.rotationCenter
+    rotateCamera(camera, state, deltaX, deltaY)
     
-    camera.setTarget(newTarget)
+    // let rotateFactor = 0.001
+  
+    // let direction = camera.position.subtract(state.rotationCenter)
+    // let radius = direction.length() // Maintain distance
 
-    // Apply the new position
-    camera.position = newPosition
+    // // Convert camera's rotation quaternion to local basis vectors
+    // let right = camera.getDirection(Axis.X)
+    // let up = camera.getDirection(Axis.Y)
+
+    // let yaw = deltaX * rotateFactor 
+    // let pitch = deltaY * rotateFactor 
+
+    // // Create rotation quaternions relative to the camera’s local axes
+    // let yawQuat = Quaternion.RotationAxis(up, yaw)
+    // let pitchQuat = Quaternion.RotationAxis(right, pitch)
+
+    // // Apply rotations
+    // let finalRotation = yawQuat.multiply(pitchQuat)
+    // direction = direction.applyRotationQuaternion(finalRotation)
+
+    // // Keep camera at a fixed distance
+    // direction.normalize().scaleInPlace(radius)
+    // let newPosition = state.rotationCenter.add(direction)
+
+    // // Gradually move target until it's close enough
+    // let newTarget = Vector3.Lerp(camera.target, state.rotationCenter, 0.1)
+
+    // // Lock target when close enough
+    // if (Vector3.Distance(newTarget, state.rotationCenter) < 0.01) newTarget = state.rotationCenter
+    
+    // camera.setTarget(newTarget)
+
+    // // Apply the new position
+    // camera.position = newPosition
   }
   camera.rotation.z = getBaseCameraRotation()
 }
